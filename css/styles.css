@@ -1,0 +1,133 @@
+/*Global Styles*/
+
+.flex-container {
+  display: flex;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.align-center {
+  align-items: center;
+}
+
+/*End Global Styles*/
+
+.screen-background {
+  background-color: #aaa;
+  height: 720px;
+}
+
+.bluesquare-background {
+  background-color: #7986b9;
+  height: 720px;
+  background-image: linear-gradient(0deg, transparent 48%, #fff 50%, transparent 52%), linear-gradient(90deg, transparent 48%, #fff 50%, transparent 52%);
+  background-size: 50px 50px;
+  border-right: 2px solid #fff;
+  border-left: 2px solid #fff;
+}
+
+.header-col {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-col p {
+  background-color: #aaa;
+  color: #fff;
+  font-size: 40px;
+  display: inline-block;
+  padding-left: 20px;
+  padding-right: 20px;
+  border: 2px solid #fff;
+}
+
+.puzzle-bg {
+  background-color: #aaa;
+  border: 2px solid #fff;
+  height: 100px;
+}
+
+.player-row {
+  margin-top: 66px;
+  height: 200px;
+}
+
+.player-background {
+  background-color: #aaa;
+  border: 1px solid #fff;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.player-background p {
+  margin: 0;
+}
+
+.player-name {
+  background-color: #7986b9;
+  border: 2px solid #fff;
+  color: #fff;
+  height: 30px;
+  width: 30%;
+
+  font-size: 12px;
+}
+
+.player-score {
+  background-color: #7986b9;
+  border: 2px solid #fff;
+  color: #fff;
+  height: 50px;
+  width: 60%;
+  font-size: 24px;
+
+}
+
+.letter-box {
+  width: 40%;
+  height: 50px;
+  background-color: #7986b9;
+  border: 2px solid #fff;
+}
+
+.middle-top {
+  height: 100px;
+}
+
+.round {
+  background-color: #aaa;
+  border: 2px solid #fff;
+  padding: 10px
+}
+
+.stoppers {
+  width: 75%;
+  background-color: #aaa;
+  border: 2px solid #fff;
+  height: 80px;
+}
+
+.stopper-box-left, .stopper-box-mid, .stopper-box-rt {
+  width: calc(100%/3);
+  height: 30px;
+  background-color: #ff0000;
+  border: 1px solid black;
+  float: left;
+}
+
+.middle-bot {
+  height: 100px;
+}
+
+.console-background {
+  background-color: #000;
+  color: #33ff33;
+  font-family: monospace;
+  height: 213px;
+  border: 2px solid #fff;
+}
