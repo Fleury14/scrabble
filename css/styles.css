@@ -124,10 +124,18 @@
   height: 100px;
 }
 
+/*Console Styles */
+
 .console-background {
   background-color: #000;
   color: #33ff33;
   font-family: monospace;
   height: 213px;
   border: 2px solid #fff;
+}
+
+.continue-button {
+  background-color: #000;
+  border: 2px solid #ff0000;
+  padding: 5px;
 }
