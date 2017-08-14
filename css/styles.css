@@ -139,3 +139,15 @@
   border: 2px solid #ff0000;
   padding: 5px;
 }
+
+.puzzle-letter-box {
+  height: 50px;
+  width: 50px;
+  background-color: #aaa;
+  color: #fff;
+  border: 1px solid red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+}
