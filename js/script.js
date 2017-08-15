@@ -7,6 +7,7 @@ var buzzerInstance = 0;
 var stopTimeFlag = false;
 var currentWord = '';
 var boardControl = 0;
+var cpuAnswered = 0;
 
 // declare puzzle box ID
 var puzzleBox = document.getElementById('puzzle-box');
@@ -116,6 +117,7 @@ function firstPuzzleStart() {
   var letterCheckString = '';
   var randCPUCheck = 0;
 
+
 // Create buzzer in console FOR NOW
 
   insertedElement.setAttribute('class', 'continue-button');
@@ -174,6 +176,22 @@ function firstPuzzleStart() {
     buzzerActivation();
   }
 
+  console.log(cpuAnswered);
+
+  if (cpuAnswered == 1) {
+
+    stopTimeFlag = true;
+    alert('CPU WINS');
+
+  }
+
+  else if (cpuAnswered == -1) {
+
+    stopTimeFlag = true;
+    alert('CPU LOSES');
+
+  }
+
 
 //  Avoid an endless loop
   break;
@@ -225,6 +243,28 @@ function buzzerActivation() {
 
         case 0:
           alert('CPU INTERCEPT!');
+
+          var textOutput = document.createElement('p');
+
+          var cpuGuess=Math.random();
+          if(cpuGuess < 0.75) {
+
+
+            textOutput.innerHTML = 'CPU answer is:' + currentWord;
+            gameConsole.appendChild(textOutput);
+
+            cpuAnswered = 1;
+          }
+
+          else {
+
+            textOutput.innerHTML = ' CPU answered... but does not know!';
+            gameConsole.appendChild(textOutput);
+
+            cpuAnswered = -1;
+
+          }
+
           break;
 
         default:
@@ -234,26 +274,28 @@ function buzzerActivation() {
 
   } // End CPU buzzer if
 
-  switch(buzzerInstance) {
+  if (buzzer == true) {
 
-    case 0:
-      var playerGuess = prompt('Buzzer Activated! Please input your guess. Remember, spelling counts');
-      var playerResult = playerGuess.toLowerCase();
+      switch(buzzerInstance) {
 
-      console.log('guess:' + playerResult + ' answer:' + currentWord);
+        case 0:
+          var playerGuess = prompt('Buzzer Activated! Please input your guess. Remember, spelling counts');
+          var playerResult = playerGuess.toLowerCase();
 
-      if (playerResult == currentWord) {
-        alert('YOU GOT IT!!!!!!11ONE');
-      }
+          console.log('guess:' + playerResult + ' answer:' + currentWord);
 
-      else {
-        alert('WRONG-O! Control lost.');
-      }
+          if (playerResult == currentWord) {
+            alert('YOU GOT IT!!!!!!11ONE');
+          }
 
-      break;
+          else {
+            alert('WRONG-O! Control lost.');
+          }
 
-    default:
-        break;
-  } // End player buzzer insance switch
+          break;
 
+        default:
+            break;
+      } // End player buzzer insance switch
+  } // End player buzzer=true if
 } // End buzzerActivation()
