@@ -1,3 +1,5 @@
+/* jshint esversion: 6 */
+
 var wordList = ['rhythmic', 'photon', 'adverb', 'infinite', 'discourage'];
 // word list for all puzzles
 
@@ -7,6 +9,8 @@ var buzzerInstance = 0;
 var stopTimeFlag = false;
 var currentWord = '';
 var boardControl = 0;
+var cpuAnswered = 0;
+var playerAnswered = 0;
 
 // declare puzzle box ID
 var puzzleBox = document.getElementById('puzzle-box');
@@ -19,7 +23,7 @@ let locale = "en-us";
 var fullMonth = today.toLocaleString(locale , {month : 'long'});
 let fullWeekday = today.toLocaleString(locale , {weekday : 'long'});
 let fullDay = today.toLocaleString(locale, {day : 'numeric'});
-let dateSuffix = 'Error'
+let dateSuffix = 'Error';
 
 // Check the day of the month and apply the correct suffix
 switch (fullDay)
@@ -59,6 +63,9 @@ insertedElement.setAttribute('class', 'continue-button');
 insertedElement.setAttribute('onclick', 'beginGame()');
 insertedElement.innerHTML = "Click Me!";
 gameConsole.appendChild(insertedElement);
+
+
+
 
 // This happens once the first continue button is clicked
 function beginGame() {
@@ -116,6 +123,7 @@ function firstPuzzleStart() {
   var letterCheckString = '';
   var randCPUCheck = 0;
 
+
 // Create buzzer in console FOR NOW
 
   insertedElement.setAttribute('class', 'continue-button');
@@ -165,14 +173,43 @@ function firstPuzzleStart() {
         console.log('checkstring' + letterCheckString);
       }
 
-  cpuPercent += 0.1;
+  cpuPercent += 0.05; // Increase likelyhood of cpu answering by 5%
   console.log(cpuPercent * 100 + '%');
 
-  randCPUCheck = Math.random();
+  randCPUCheck = Math.random(); // Get a random number to see if cpu will buzz
 
+// check random number against % of cpu answering. if its less, cpu will buzz in
   if (randCPUCheck < cpuPercent) {
     buzzerActivation();
   }
+
+  console.log(cpuAnswered);
+
+  if (cpuAnswered == 1) {
+
+    stopTimeFlag = true;
+    appendOutputConsole('p', 'CPU answered correctly');
+
+  }
+
+  else if (cpuAnswered == -1) {
+
+    stopTimeFlag = true;
+    appendOutputConsole('p', 'CPU answered incorrectly');
+
+  }
+
+
+  if(boardControl == 1) {
+
+    appendOutputConsole('p', 'Player has control of the board');
+
+  } else if (boardControl == 2) {
+
+    appendOutputConsole('p', 'CPU has control of the board');
+
+  }
+
 
 
 //  Avoid an endless loop
@@ -208,7 +245,7 @@ function firstPuzzleStart() {
     if(buzzer==false) {
       console.log ('time stopped due to buzzer');
       buzzer=true;
-      stopTimeFlag=true;
+
 
       buzzerActivation(); // Call activation function for insctructions
     }
@@ -225,7 +262,29 @@ function buzzerActivation() {
 
         case 0:
           alert('CPU INTERCEPT!');
-          break;
+
+          var textOutput = document.createElement('p');
+          // even if the cpu buzzes in, theres only a 75% chance they answer correctly off the bad, this random number checks that
+          var cpuGuess=Math.random();
+          if(cpuGuess < 0.75) {
+
+            // cpu answers correctly, give them control and toggle a correct answer
+            textOutput.innerHTML = 'CPU answer is:' + currentWord;
+            gameConsole.appendChild(textOutput);
+            boardControl = 2;
+            cpuAnswered = 1;
+          } // end correct cpu response
+
+          else {
+            // cpu answers incorrectly, give player control
+            textOutput.innerHTML = ' CPU buzzed in... but does not know!';
+            gameConsole.appendChild(textOutput);
+            boardControl = 1;
+            cpuAnswered = -1;
+
+          } // end incorrect cpu response
+
+          break; // break case 0
 
         default:
           break;
@@ -234,26 +293,45 @@ function buzzerActivation() {
 
   } // End CPU buzzer if
 
-  switch(buzzerInstance) {
+  if (buzzer == true) { //buzzer activation, ideally use this function for all buzzers
 
-    case 0:
-      var playerGuess = prompt('Buzzer Activated! Please input your guess. Remember, spelling counts');
-      var playerResult = playerGuess.toLowerCase();
+      switch(buzzerInstance) {
 
-      console.log('guess:' + playerResult + ' answer:' + currentWord);
+        case 0: // Case 0 -- First round
+          var playerGuess = prompt('Buzzer Activated! Please input your guess. Remember, spelling counts');
+          var playerResult = playerGuess.toLowerCase();
+          // ask player for a guess, and make it lower case to make it case insensitive
+          console.log('guess:' + playerResult + ' answer:' + currentWord);
 
-      if (playerResult == currentWord) {
-        alert('YOU GOT IT!!!!!!11ONE');
-      }
+          if (playerResult == currentWord) {
+            alert('YOU GOT IT!');
+            boardControl = 1;
+            playerAnswered = 1;
+						appendOutputConsole('p', 'Player has control of the board');
+						stopTimeFlag = true;
+        }  // If answer is correct, give the player control and note a correct answer
 
-      else {
-        alert('WRONG-O! Control lost.');
-      }
+          else {
+            alert('WRONG-O! Control lost.');
+            boardControl = 2;
+            playerAnswered = -1;
+						appendOutputConsole('p', 'CPU has control of the board');
+						stopTimeFlag = true;
+          } // if the answer is wrong, give the cpu control and not an incorrect answer.
 
-      break;
+          break;
 
-    default:
-        break;
-  } // End player buzzer insance switch
-
+        default:
+            break;
+      } // End player buzzer insance switch
+  } // End player buzzer=true if
 } // End buzzerActivation()
+
+
+function appendOutputConsole (elem, text) {
+
+	insertedElement = document.createElement(elem);
+	insertedElement.innerHTML = text;
+	gameConsole.appendChild(insertedElement);
+
+}
