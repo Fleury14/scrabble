@@ -1,3 +1,5 @@
+/* jshint esversion: 6 */
+
 var wordList = ['rhythmic', 'photon', 'adverb', 'infinite', 'discourage'];
 // word list for all puzzles
 
@@ -21,7 +23,7 @@ let locale = "en-us";
 var fullMonth = today.toLocaleString(locale , {month : 'long'});
 let fullWeekday = today.toLocaleString(locale , {weekday : 'long'});
 let fullDay = today.toLocaleString(locale, {day : 'numeric'});
-let dateSuffix = 'Error'
+let dateSuffix = 'Error';
 
 // Check the day of the month and apply the correct suffix
 switch (fullDay)
@@ -186,26 +188,25 @@ function firstPuzzleStart() {
   if (cpuAnswered == 1) {
 
     stopTimeFlag = true;
-    alert('CPU WINS');
+    appendOutputConsole('p', 'CPU answered correctly');
 
   }
 
   else if (cpuAnswered == -1) {
 
     stopTimeFlag = true;
-    alert('CPU LOSES');
+    appendOutputConsole('p', 'CPU answered incorrectly');
 
   }
 
-  console.log('boardControl:' + boardControl);
 
   if(boardControl == 1) {
 
-    alert('Player has control of the board');
+    appendOutputConsole('p', 'Player has control of the board');
 
   } else if (boardControl == 2) {
 
-    alert('CPU has control of the board');
+    appendOutputConsole('p', 'CPU has control of the board');
 
   }
 
@@ -244,7 +245,7 @@ function firstPuzzleStart() {
     if(buzzer==false) {
       console.log ('time stopped due to buzzer');
       buzzer=true;
-      stopTimeFlag=true;
+
 
       buzzerActivation(); // Call activation function for insctructions
     }
@@ -272,7 +273,7 @@ function buzzerActivation() {
             gameConsole.appendChild(textOutput);
             boardControl = 2;
             cpuAnswered = 1;
-          }
+          } // end correct cpu response
 
           else {
             // cpu answers incorrectly, give player control
@@ -281,9 +282,9 @@ function buzzerActivation() {
             boardControl = 1;
             cpuAnswered = -1;
 
-          }
+          } // end incorrect cpu response
 
-          break;
+          break; // break case 0
 
         default:
           break;
@@ -292,27 +293,31 @@ function buzzerActivation() {
 
   } // End CPU buzzer if
 
-  if (buzzer == true) {
+  if (buzzer == true) { //buzzer activation, ideally use this function for all buzzers
 
       switch(buzzerInstance) {
 
-        case 0:
+        case 0: // Case 0 -- First round
           var playerGuess = prompt('Buzzer Activated! Please input your guess. Remember, spelling counts');
           var playerResult = playerGuess.toLowerCase();
-
+          // ask player for a guess, and make it lower case to make it case insensitive
           console.log('guess:' + playerResult + ' answer:' + currentWord);
 
           if (playerResult == currentWord) {
-            alert('YOU GOT IT!!!!!!11ONE');
+            alert('YOU GOT IT!');
             boardControl = 1;
             playerAnswered = 1;
-          }
+						appendOutputConsole('p', 'Player has control of the board');
+						stopTimeFlag = true;
+        }  // If answer is correct, give the player control and note a correct answer
 
           else {
             alert('WRONG-O! Control lost.');
             boardControl = 2;
             playerAnswered = -1;
-          }
+						appendOutputConsole('p', 'CPU has control of the board');
+						stopTimeFlag = true;
+          } // if the answer is wrong, give the cpu control and not an incorrect answer.
 
           break;
 
@@ -321,3 +326,12 @@ function buzzerActivation() {
       } // End player buzzer insance switch
   } // End player buzzer=true if
 } // End buzzerActivation()
+
+
+function appendOutputConsole (elem, text) {
+
+	insertedElement = document.createElement(elem);
+	insertedElement.innerHTML = text;
+	gameConsole.appendChild(insertedElement);
+
+}
