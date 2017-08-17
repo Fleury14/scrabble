@@ -8,6 +8,7 @@ var stopTimeFlag = false;
 var currentWord = '';
 var boardControl = 0;
 var cpuAnswered = 0;
+var playerAnswered = 0;
 
 // declare puzzle box ID
 var puzzleBox = document.getElementById('puzzle-box');
@@ -60,6 +61,9 @@ insertedElement.setAttribute('class', 'continue-button');
 insertedElement.setAttribute('onclick', 'beginGame()');
 insertedElement.innerHTML = "Click Me!";
 gameConsole.appendChild(insertedElement);
+
+
+
 
 // This happens once the first continue button is clicked
 function beginGame() {
@@ -167,11 +171,12 @@ function firstPuzzleStart() {
         console.log('checkstring' + letterCheckString);
       }
 
-  cpuPercent += 0.1;
+  cpuPercent += 0.05; // Increase likelyhood of cpu answering by 5%
   console.log(cpuPercent * 100 + '%');
 
-  randCPUCheck = Math.random();
+  randCPUCheck = Math.random(); // Get a random number to see if cpu will buzz
 
+// check random number against % of cpu answering. if its less, cpu will buzz in
   if (randCPUCheck < cpuPercent) {
     buzzerActivation();
   }
@@ -191,6 +196,19 @@ function firstPuzzleStart() {
     alert('CPU LOSES');
 
   }
+
+  console.log('boardControl:' + boardControl);
+
+  if(boardControl == 1) {
+
+    alert('Player has control of the board');
+
+  } else if (boardControl == 2) {
+
+    alert('CPU has control of the board');
+
+  }
+
 
 
 //  Avoid an endless loop
@@ -245,22 +263,22 @@ function buzzerActivation() {
           alert('CPU INTERCEPT!');
 
           var textOutput = document.createElement('p');
-
+          // even if the cpu buzzes in, theres only a 75% chance they answer correctly off the bad, this random number checks that
           var cpuGuess=Math.random();
           if(cpuGuess < 0.75) {
 
-
+            // cpu answers correctly, give them control and toggle a correct answer
             textOutput.innerHTML = 'CPU answer is:' + currentWord;
             gameConsole.appendChild(textOutput);
-
+            boardControl = 2;
             cpuAnswered = 1;
           }
 
           else {
-
-            textOutput.innerHTML = ' CPU answered... but does not know!';
+            // cpu answers incorrectly, give player control
+            textOutput.innerHTML = ' CPU buzzed in... but does not know!';
             gameConsole.appendChild(textOutput);
-
+            boardControl = 1;
             cpuAnswered = -1;
 
           }
@@ -286,10 +304,14 @@ function buzzerActivation() {
 
           if (playerResult == currentWord) {
             alert('YOU GOT IT!!!!!!11ONE');
+            boardControl = 1;
+            playerAnswered = 1;
           }
 
           else {
             alert('WRONG-O! Control lost.');
+            boardControl = 2;
+            playerAnswered = -1;
           }
 
           break;
