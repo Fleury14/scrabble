@@ -9,8 +9,9 @@ var currentWord = '';
 var boardControl = 0;
 
 // declare puzzle box ID
-var puzzleBox = document.getElementById('puzzle-box');
-
+const puzzleBox = document.getElementById('puzzle-box');
+const gameConsole = document.getElementById('gameConsole');
+let insertedElement = '';
 
 let today = new Date(); // Get todays date and loale
 let locale = "en-us";
@@ -53,12 +54,13 @@ let dateString = fullWeekday + ', ' + fullMonth + ' ' + fullDay.concat(dateSuffi
 document.getElementById('gameConsole').innerHTML = 'Welcome! Today is ' + dateString + '. Click the Start button to begin.';
 
 // Insert .continue button to initiate game
-var insertedElement = document.createElement('button');
-var gameConsole = document.getElementById('gameConsole');
-insertedElement.setAttribute('class', 'continue-button');
-insertedElement.setAttribute('onclick', 'beginGame()');
-insertedElement.innerHTML = "Click Me!";
-gameConsole.appendChild(insertedElement);
+// var insertedElement = document.createElement('button');
+//
+// insertedElement.setAttribute('class', 'continue-button');
+// insertedElement.setAttribute('onclick', 'beginGame()');
+// insertedElement.innerHTML = "Click Me!";
+// gameConsole.appendChild(insertedElement);
+appendOutputConsole('div', '<button class="continue-button" onclick="beginGame()">Click Me!</button>', 'flex-container justify-center');
 
 // This happens once the first continue button is clicked
 function beginGame() {
@@ -74,9 +76,11 @@ function beginGame() {
   gameConsole.innerHTML = 'Thanks ' + player1Name + '. The opening puzzle will begin. There will be one word up above that will fill in slowly. Click the buzzer of the opportunity to guess correctly. A correct guess will net you 50 points, and control of the first board. Guessing incorrectly will give the opponent the points and control. Good luck, and click the start button to begin.';
 
 // modify the start button to initialize the pizzle as oppose to beginning the game
-  insertedElement.setAttribute('onclick', 'firstPuzzleStart()');
-  insertedElement.innerHTML = 'Begin first puzzle';
-  gameConsole.appendChild(insertedElement);
+
+	appendOutputConsole('div', '<button class="continue-button" onclick="firstPuzzleStart()">Begin first puzzle</button>', 'flex-container justify-center');
+	// insertedElement.setAttribute('onclick', 'firstPuzzleStart()');
+  // insertedElement.innerHTML = 'Begin first puzzle';
+  // gameConsole.appendChild(insertedElement);
 
 }
 // end beginGame function
@@ -118,10 +122,12 @@ function firstPuzzleStart() {
 
 // Create buzzer in console FOR NOW
 
-  insertedElement.setAttribute('class', 'continue-button');
-  insertedElement.setAttribute('onclick', 'playerOneBuzzer()');
-  insertedElement.innerHTML = "BUZZER";
-  gameConsole.appendChild(insertedElement);
+  // insertedElement.setAttribute('class', 'continue-button');
+  // insertedElement.setAttribute('onclick', 'playerOneBuzzer()');
+  // insertedElement.innerHTML = "BUZZER";
+  // gameConsole.appendChild(insertedElement);
+
+	appendOutputConsole('div', '<button class="continue-button" onclick="playerOneBuzzer()">BUZZER</button>');
 
 
 // Begin timer: start filling in tiles at a rate of 1 per second
@@ -234,26 +240,38 @@ function buzzerActivation() {
 
   } // End CPU buzzer if
 
-  switch(buzzerInstance) {
+	if(buzzer == true) {
 
-    case 0:
-      var playerGuess = prompt('Buzzer Activated! Please input your guess. Remember, spelling counts');
-      var playerResult = playerGuess.toLowerCase();
+		switch(buzzerInstance) {
 
-      console.log('guess:' + playerResult + ' answer:' + currentWord);
+	    case 0:
+	      var playerGuess = prompt('Buzzer Activated! Please input your guess. Remember, spelling counts');
+	      var playerResult = playerGuess.toLowerCase();
 
-      if (playerResult == currentWord) {
-        alert('YOU GOT IT!!!!!!11ONE');
-      }
+	      console.log('guess:' + playerResult + ' answer:' + currentWord);
 
-      else {
-        alert('WRONG-O! Control lost.');
-      }
+	      if (playerResult == currentWord) {
+	        alert('YOU GOT IT!!!!!!11ONE');
+	      }
 
-      break;
+	      else {
+	        alert('WRONG-O! Control lost.');
+	      }
 
-    default:
-        break;
-  } // End player buzzer insance switch
+	      break;
 
+	    default:
+	        break;
+	  } // End player buzzer insance switch
+	} //end if
 } // End buzzerActivation()
+
+// fucntion for outputting to conosle
+function appendOutputConsole(element, value, className, idName, onClick) {
+  insertedElement = document.createElement(element);
+  insertedElement.setAttribute('class', className);
+  insertedElement.setAttribute('id', idName);
+  insertedElement.setAttribute('onclick', onClick);
+  insertedElement.innerHTML = value;
+  gameConsole.appendChild(insertedElement);
+}
