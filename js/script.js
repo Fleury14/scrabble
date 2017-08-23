@@ -3,18 +3,25 @@
 let wordList = ['rhythmic', 'photon', 'adverb', 'infinite', 'discourage'];
 // word list for all puzzles
 
+let usedWords = [];
+
 // Global var init: buzzer status, timer status, puzzle answer
 let buzzer = false;
 let buzzerInstance = 0;
 let stopTimeFlag = false;
+let roundInstructions = false;  // did player recieve round instructions
 let currentWord = '';
+let currentRound = 0;
 let boardControl = 0;
 let cpuAnswered = 0;
+let puzzleBonusFlag = 0; // will there be a bonus tile in a puzzle?
+let bonusTileIndex = 0; //index of bonus tile
 let playerAnswered = 0;
 
 // declare puzzle box ID
 const puzzleBox = document.getElementById('puzzle-box');
 const gameConsole = document.getElementById('gameConsole');
+const roundCount = document.querySelector('#roundCount');
 let insertedElement = '';
 
 
@@ -94,8 +101,8 @@ function firstPuzzleStart() {
   for (i = 0; i < currentWord.length; i++) {
 
     // Create the tiles for the puzzle. Give each box the class for the box styles and an ID with a corresponding number (letterbox*). Finally, output the boxes
-    var boxIdOutput = 'letter-box' + i.toString();
-    var boxOutput = document.createElement('div');
+    let boxIdOutput = 'letter-box' + i.toString();
+    let boxOutput = document.createElement('div');
     boxOutput.setAttribute('class', 'puzzle-letter-box');
     boxOutput.setAttribute('id', boxIdOutput);
     puzzleBox.appendChild(boxOutput);
@@ -171,7 +178,7 @@ function firstPuzzleStart() {
   } //end if
   console.log(cpuAnswered);
 
-  if (cpuAnswered == 1) {
+  if (cpuAnswered == 1) { //output results if cpu answers
     stopTimeFlag = true;
     appendOutputConsole('p', 'CPU answered correctly');
   }  else if (cpuAnswered == -1) {
@@ -185,15 +192,14 @@ function firstPuzzleStart() {
     appendOutputConsole('p', 'CPU has control of the board');
   } // end if
 
-
+	if(boardControl!=0) {
+		appendOutputConsole('div', '<button class="continue-button" onclick="showingInstructions()">Continue</button>', 'flex-container justify-center');
+	}
 
 //  Avoid an endless loop
   break;
     }
-
-
   } //End fillInTiles
-
 
 
 
@@ -212,6 +218,42 @@ function firstPuzzleStart() {
   // }
 
 } // End firstPuzzleStart()
+
+function showingInstructions() {
+	clearConsole();
+	appendOutputConsole('p', 'There will be a total of 5 puzzles to solve. Each turn a player will select a tile from the list. You can guess one of the two tiles you selected to be filled in. After the tile is filled in, you or the CPU will have a chance to solve. If you can\'t, you can draw one more tile. Be careful, there are three tiles called stoppers that dont belong in the word and if you pick one, you will lose control of the board.');
+	appendOutputConsole('p', 'Puzzles are 100 points each plus 10 points for every tile not used. Correctly solving after guessing the tile in a blue square will give you 150, a pink one iwll give you 200. Good luck.');
+	appendOutputConsole('div', '<button class="continue-button" onclick="beginFirstRound()">Continue</button>', 'flex-container justify-center');
+}
+
+function beginFirstRound() {
+	// initialize variables:
+	usedWords.push(currentWord); // add last word to used words list
+	let index = wordList.indexOf(currentWord);
+	wordList.splice(index, 1); // remove current word from word list
+	currentRound++; // increment round
+	clearConsole();
+	puzzleBox.innerHTML=''; // clear puzzleBox
+	bonusTileIndex = 0; // reset bonus tile
+	let randNum = Math.floor(Math.random() * wordList.length);
+	currentWord = wordList[randNum]; // get new word
+
+	randNum = Math.random();  // determine if there will be a bonus spot
+	if (randNum <= 0.2) {
+		puzzleBonusFlag = 2; // pink tile bonus chance: 20%
+	} else if (randNum > 0.2 && randNum < 0.5) {
+		puzzleBonusFlag = 1; // blue bonus chance: 50%
+	} // end if
+
+	for (i = 0; i < currentWord.length; i++) { //draw puzzle
+		let boxIdOutput = 'letter-box' + i.toString();
+		let boxOutput = document.createElement('div');
+		boxOutput.setAttribute('class', 'puzzle-letter-box');
+		boxOutput.setAttribute('id', boxIdOutput);
+		puzzleBox.appendChild(boxOutput);
+	}
+
+} // end beginFirstRound
 
 // Function if buzzer is clicked
   function playerOneBuzzer() {
@@ -242,21 +284,18 @@ function buzzerActivation() {
           // even if the cpu buzzes in, theres only a 75% chance they answer correctly off the bad, this random number checks that
           var cpuGuess=Math.random();
           if(cpuGuess < 0.75) {
-
             // cpu answers correctly, give them control and toggle a correct answer
             textOutput.innerHTML = 'CPU answer is:' + currentWord;
             gameConsole.appendChild(textOutput);
             boardControl = 2;
             cpuAnswered = 1;
           } // end correct cpu response
-
           else {
             // cpu answers incorrectly, give player control
             textOutput.innerHTML = ' CPU buzzed in... but does not know!';
             gameConsole.appendChild(textOutput);
             boardControl = 1;
             cpuAnswered = -1;
-
           } // end incorrect cpu response
 
           break; // break case 0
@@ -284,6 +323,7 @@ function buzzerActivation() {
             playerAnswered = 1;
 						appendOutputConsole('p', 'Player has control of the board');
 						stopTimeFlag = true;
+						appendOutputConsole('div', '<button class="continue-button" onclick="showingInstructions()">Continue</button>', 'flex-container justify-center');
         }  // If answer is correct, give the player control and note a correct answer
 
           else {
@@ -292,6 +332,7 @@ function buzzerActivation() {
             playerAnswered = -1;
 						appendOutputConsole('p', 'CPU has control of the board');
 						stopTimeFlag = true;
+						appendOutputConsole('div', '<button class="continue-button" onclick="showingInstructions()">Continue</button>', 'flex-container justify-center');
           } // if the answer is wrong, give the cpu control and not an incorrect answer.
 
           break;
@@ -312,4 +353,8 @@ function appendOutputConsole(element, value, className, idName, onClick) {
   insertedElement.setAttribute('onclick', onClick);
   insertedElement.innerHTML = value;
   gameConsole.appendChild(insertedElement);
+}
+
+function clearConsole() {
+	gameConsole.innerHTML = '';
 }

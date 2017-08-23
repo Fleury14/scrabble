@@ -143,11 +143,20 @@
 .puzzle-letter-box {
   height: 50px;
   width: 50px;
-  background-color: #aaa;
-  color: #fff;
+  background-color: #fff;
+  color: #000;
+  font-weight: 500;
   border: 1px solid red;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 24px;
+}
+
+.puzzle-box-blue {
+  background-color: #427df4;
+}
+
+.puzzle-box-pink {
+  background-color: #f771b0;
 }
