@@ -1,26 +1,28 @@
 /* jshint esversion: 6 */
 
-var wordList = ['rhythmic', 'photon', 'adverb', 'infinite', 'discourage'];
+let wordList = ['rhythmic', 'photon', 'adverb', 'infinite', 'discourage'];
 // word list for all puzzles
 
 // Global var init: buzzer status, timer status, puzzle answer
-var buzzer = false;
-var buzzerInstance = 0;
-var stopTimeFlag = false;
-var currentWord = '';
-var boardControl = 0;
-var cpuAnswered = 0;
-var playerAnswered = 0;
+let buzzer = false;
+let buzzerInstance = 0;
+let stopTimeFlag = false;
+let currentWord = '';
+let boardControl = 0;
+let cpuAnswered = 0;
+let playerAnswered = 0;
 
 // declare puzzle box ID
-var puzzleBox = document.getElementById('puzzle-box');
+const puzzleBox = document.getElementById('puzzle-box');
+const gameConsole = document.getElementById('gameConsole');
+let insertedElement = '';
 
 
 let today = new Date(); // Get todays date and loale
 let locale = "en-us";
 
 // Get Day, month, and date. make suffix 'Error' for debug
-var fullMonth = today.toLocaleString(locale , {month : 'long'});
+let fullMonth = today.toLocaleString(locale , {month : 'long'});
 let fullWeekday = today.toLocaleString(locale , {weekday : 'long'});
 let fullDay = today.toLocaleString(locale, {day : 'numeric'});
 let dateSuffix = 'Error';
@@ -46,26 +48,16 @@ switch (fullDay)
 
   default:
   	dateSuffix = 'th';
-
-}
+} // end switch
 
 // Put it all together for the date string
 let dateString = fullWeekday + ', ' + fullMonth + ' ' + fullDay.concat(dateSuffix);
-
 
 // Introduction
 document.getElementById('gameConsole').innerHTML = 'Welcome! Today is ' + dateString + '. Click the Start button to begin.';
 
 // Insert .continue button to initiate game
-var insertedElement = document.createElement('button');
-var gameConsole = document.getElementById('gameConsole');
-insertedElement.setAttribute('class', 'continue-button');
-insertedElement.setAttribute('onclick', 'beginGame()');
-insertedElement.innerHTML = "Click Me!";
-gameConsole.appendChild(insertedElement);
-
-
-
+appendOutputConsole('div', '<button class="continue-button" onclick="beginGame()">Click Me!</button>', 'flex-container justify-center');
 
 // This happens once the first continue button is clicked
 function beginGame() {
@@ -81,10 +73,7 @@ function beginGame() {
   gameConsole.innerHTML = 'Thanks ' + player1Name + '. The opening puzzle will begin. There will be one word up above that will fill in slowly. Click the buzzer of the opportunity to guess correctly. A correct guess will net you 50 points, and control of the first board. Guessing incorrectly will give the opponent the points and control. Good luck, and click the start button to begin.';
 
 // modify the start button to initialize the pizzle as oppose to beginning the game
-  insertedElement.setAttribute('onclick', 'firstPuzzleStart()');
-  insertedElement.innerHTML = 'Begin first puzzle';
-  gameConsole.appendChild(insertedElement);
-
+	appendOutputConsole('div', '<button class="continue-button" onclick="firstPuzzleStart()">Begin first Puzzle</button>', 'flex-container justify-center');
 }
 // end beginGame function
 
@@ -92,12 +81,10 @@ function firstPuzzleStart() {
 
 // Clear gameConsole
   gameConsole.innerHTML = "";
-
   gameConsole.innerHTML = 'First puzzle commencing...';
 
   var randNum = Math.floor(Math.random()*(wordList.length - 1));
   currentWord = wordList[randNum]; // pull an random word for the list
-
 
 // Output pizzle answer for debug
   // var wordOutput = document.createElement('p');
@@ -125,11 +112,11 @@ function firstPuzzleStart() {
 
 
 // Create buzzer in console FOR NOW
-
-  insertedElement.setAttribute('class', 'continue-button');
-  insertedElement.setAttribute('onclick', 'playerOneBuzzer()');
-  insertedElement.innerHTML = "BUZZER";
-  gameConsole.appendChild(insertedElement);
+	appendOutputConsole('div', '<button class="continue-button" onclick="playerOneBuzzer()">BUZZER</button>', 'flex-container justify-center');
+  // insertedElement.setAttribute('class', 'continue-button');
+  // insertedElement.setAttribute('onclick', 'playerOneBuzzer()');
+  // insertedElement.innerHTML = "BUZZER";
+  // gameConsole.appendChild(insertedElement);
 
 
 // Begin timer: start filling in tiles at a rate of 1 per second
@@ -167,7 +154,7 @@ function firstPuzzleStart() {
 // A secondary conditional (probably redundant, remove later) to make sure the letter in question hasn't been used
 // Passing that: Display the letter, increment the loop counter, add the array label to the string checkString, and console log it for debug
       if (letterCheckString.indexOf(letterTarget) < 0) {
-        document.getElementById(elementTarget).innerHTML = letterToBeFilled;
+        document.getElementById(elementTarget).innerHTML = letterToBeFilled.toUpperCase();
         i++;
         letterCheckString = letterCheckString + letterTarget.toString();
         console.log('checkstring' + letterCheckString);
@@ -181,34 +168,22 @@ function firstPuzzleStart() {
 // check random number against % of cpu answering. if its less, cpu will buzz in
   if (randCPUCheck < cpuPercent) {
     buzzerActivation();
-  }
-
+  } //end if
   console.log(cpuAnswered);
 
   if (cpuAnswered == 1) {
-
     stopTimeFlag = true;
     appendOutputConsole('p', 'CPU answered correctly');
-
-  }
-
-  else if (cpuAnswered == -1) {
-
+  }  else if (cpuAnswered == -1) {
     stopTimeFlag = true;
     appendOutputConsole('p', 'CPU answered incorrectly');
-
-  }
-
+  } // end if
 
   if(boardControl == 1) {
-
     appendOutputConsole('p', 'Player has control of the board');
-
   } else if (boardControl == 2) {
-
     appendOutputConsole('p', 'CPU has control of the board');
-
-  }
+  } // end if
 
 
 
@@ -328,10 +303,13 @@ function buzzerActivation() {
 } // End buzzerActivation()
 
 
-function appendOutputConsole (elem, text) {
 
-	insertedElement = document.createElement(elem);
-	insertedElement.innerHTML = text;
-	gameConsole.appendChild(insertedElement);
-
+// fucntion for outputting to conosle
+function appendOutputConsole(element, value, className, idName, onClick) {
+  insertedElement = document.createElement(element);
+  insertedElement.setAttribute('class', className);
+  insertedElement.setAttribute('id', idName);
+  insertedElement.setAttribute('onclick', onClick);
+  insertedElement.innerHTML = value;
+  gameConsole.appendChild(insertedElement);
 }
