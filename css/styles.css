@@ -51,8 +51,17 @@
   height: 100px;
 }
 
+.tile-cont {
+  margin-top: 5px;
+  visibility: hidden;
+  height: 56px;
+  border: 2px solid #fff;
+  background-color: #aaa;
+
+}
+
 .player-row {
-  margin-top: 66px;
+  margin-top: 5px;
   height: 200px;
 }
 

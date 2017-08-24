@@ -2,6 +2,7 @@
 
 let wordList = ['rhythmic', 'photon', 'adverb', 'infinite', 'discourage'];
 // word list for all puzzles
+// word conditions: no more than 10 letters, must not use every vowel
 
 let usedWords = [];
 
@@ -17,6 +18,10 @@ let cpuAnswered = 0;
 let puzzleBonusFlag = 0; // will there be a bonus tile in a puzzle?
 let bonusTileIndex = 0; //index of bonus tile
 let playerAnswered = 0;
+let consanantList = 'bcdfghjklmnpqrstvwxyz';
+let vowelList = 'aeiou';
+let tileList = []; // list of tiles for main puzzles
+
 
 // declare puzzle box ID
 const puzzleBox = document.getElementById('puzzle-box');
@@ -202,21 +207,6 @@ function firstPuzzleStart() {
   } //End fillInTiles
 
 
-
-  // var consanantList = 'bcdfghjklmnpqrstvwxyz';
-  // var vowelList = 'aeiou';
-  //
-  // while (true) {
-  //   randVowel = vowelList.charAt(Math.floor(Math.random()*5));
-  //
-  //   if (currentWord.indexOf(randVowel) < 0) {
-  //     var tileList = currentWord.concat(randVowel);
-  //     console.log(tileList);
-  //     break;
-  //   }
-  //
-  // }
-
 } // End firstPuzzleStart()
 
 function showingInstructions() {
@@ -245,13 +235,44 @@ function beginFirstRound() {
 		puzzleBonusFlag = 1; // blue bonus chance: 50%
 	} // end if
 
+	if(puzzleBonusFlag>0) { bonusTileIndex = Math.floor(Math.random() * currentWord.length); }
+
 	for (i = 0; i < currentWord.length; i++) { //draw puzzle
 		let boxIdOutput = 'letter-box' + i.toString();
 		let boxOutput = document.createElement('div');
 		boxOutput.setAttribute('class', 'puzzle-letter-box');
 		boxOutput.setAttribute('id', boxIdOutput);
+
+		if (i == bonusTileIndex) { // if theres a bonus tile here, draw it
+			if(puzzleBonusFlag == 1){
+				boxOutput.classList.add('puzzle-box-pink');
+			} else if(puzzleBonusFlag == 2) {
+				boxOutput.classList.add('puzzle-box-blue');
+			} // end color if
+	  } //end bonustile if
 		puzzleBox.appendChild(boxOutput);
-	}
+	} //end draw puzzle for
+
+	let tiledWord = currentWord;
+	let randVowel = '';
+	let randCons = '';
+	while (true) { // applying 1 random vowel as a stopper
+    randVowel = vowelList.charAt(Math.floor(Math.random()*5));
+  // Note: For now, the random vowel will always be a vowel not used
+    if (currentWord.indexOf(randVowel) < 0) {
+      tiledWord += randVowel;
+      break;
+    } //end if
+  } //end vowel while loop
+	while (true) { // applying 2 random consanants as a stopper
+    randCons = consanantList.charAt(Math.floor(Math.random()*consanantList.length));
+  // Note: For now, the random cons's will always be a vowel not used
+    if (currentWord.indexOf(randCons) < 0) {
+      tiledWord += randCons;
+      break;
+    } //end if
+  } //end vowel while loop
+	console.log(tiledWord);
 
 } // end beginFirstRound
 
