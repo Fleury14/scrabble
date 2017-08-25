@@ -8,6 +8,10 @@
   justify-content: center;
 }
 
+.justify-around {
+  justify-content: space-around;
+}
+
 .align-center {
   align-items: center;
 }
@@ -147,6 +151,12 @@
   height: 100px;
 }
 
+.tilebank-box {
+  color: #fff;
+  font-size: 2em;
+
+}
+
 .round {
   background-color: #aaa;
   border: 2px solid #fff;
@@ -186,6 +196,10 @@
   background-color: #000;
   border: 2px solid #ff0000;
   padding: 5px;
+}
+
+.letter-button-padding {
+  padding: 25px;
 }
 
 /* off screen styles */

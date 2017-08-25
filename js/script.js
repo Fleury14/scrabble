@@ -16,6 +16,7 @@ let currentRound = 0;
 let boardControl = 0;
 let cpuAnswered = 0;
 let puzzleBonusFlag = 0; // will there be a bonus tile in a puzzle?
+let playerBonusFlag = 0; // has the player/cpu just selected a bonus tile?
 let bonusTileIndex = 0; //index of bonus tile
 let playerAnswered = 0;
 let consanantList = 'bcdfghjklmnpqrstvwxyz';
@@ -24,6 +25,7 @@ let tileList = []; // list of tiles for main puzzles
 let stoppers = 0; // number of stoppers in play
 let tileResult = []; //need to scope the array that will contain the result of a tile check
 let tileBank = []; //holder for the selected tiles
+let tilesLeft = 0; //number of tiles remaining
 
 
 // declare puzzle box ID
@@ -36,6 +38,8 @@ const tileAnimBack = document.querySelector('#tileAnimBack');
 const tileAnimBox = document.querySelector('#tileAnimBox');
 const tileBank1 = document.querySelector('#tileBank1');
 const tileBank2 = document.querySelector('#tileBank2');
+const tileBank3 = document.querySelector('#tileBank3');
+const tileBank4 = document.querySelector('#tileBank4');
 let insertedElement = '';
 
 
@@ -231,7 +235,7 @@ function beginFirstRound() {
 	let index = wordList.indexOf(currentWord);
 	wordList.splice(index, 1); // remove current word from word list
 	currentRound++; // increment round
-	stoppers = 3;
+	stoppers = 3; // 3 stoppers are on the board
 	clearConsole();
 	puzzleBox.innerHTML=''; // clear puzzleBox
 	bonusTileIndex = 0; // reset bonus tile
@@ -317,19 +321,61 @@ function playerTurn() {
 	// notify player to click on a tile
 	appendOutputConsole('p', 'Please click on one of the numbered tiles to continue');
 
-
-
 	//add eventlisteners for tiles that are still in play
 	for (i=0; i < tileList.length; i++) {
-			if(tileList[i][1] == false) {
-				document.querySelector('#tile' + i).addEventListener('click', function(e) {
-					giveTileBank(parseInt(e.target.innerText) - 1);
-					console.log(tileResult);
-				});
-			} //end if
+		if(tileList[i][1] == false) {
+			document.querySelector('#tile' + i).addEventListener('click', giveTileBank);
+		} //end if
 	}// end for
 
 }// end playerTurn()
+
+function playerTurnA() {
+	// At this point the player has selected tiles and has two tiles in his bank
+	clearConsole();
+	playerBonusFlag = 0; //reset bonus flag
+
+	// create two buttons in the console and add listeners for each tile in the bank
+	appendOutputConsole('p', 'Please select one of the two letters in your bank to be filled into the puzzle:');
+	appendOutputConsole('div', '<button class="continue-button text-uppercase letter-button-padding" id="consoleButtonA"></button><button class="continue-button text-uppercase letter-button-padding" id="consoleButtonB"></button>', 'flex-container justify-around' );
+	let consoleButtonA = document.querySelector('#consoleButtonA');
+	let consoleButtonB = document.querySelector('#consoleButtonB');
+	consoleButtonA.innerText = tileBank[0][1];
+	consoleButtonB.innerText = tileBank[1][1];
+	consoleButtonA.addEventListener('click', function() {
+		checkPlayerTile(tileBank[0][0]); // check player pick and play animation
+		if(tileResult[0] == false) { //if the letter was Wrong
+			stoppers--; //decrement stoppers and redraw
+			drawStoppers();
+			tileBank.shift(); // pull tile out of bank
+			boardControl = 2; // give CPU control
+			cpuContinue(); // ask cpu solve/pull tiles
+		} else { //now if its true though...
+			setTimeout(function() {document.querySelector('#letter-box' + tileResult[1]).innerHTML=tileResult[2].toUpperCase();}, 1000); // fill in letter
+			tileBank.shift(); //pull tile out of bank
+			playerContinue(); // give player option to contine or solve
+		} //end if
+	}); //end first button function
+	consoleButtonB.addEventListener('click', function() {
+		checkPlayerTile(tileBank[1][0]); //chech tile and play animation
+		if(tileResult[0] == false) { //if the letter was Wrong
+			stoppers--; //decrement stoppers and redraw
+			drawStoppers();
+			tileBank.pop(); // pull tile out of bank
+			boardControl = 2; // give CPU control
+			cpuContinue(); // ask cpu solve/pull tiles
+		} else { //now if its true though...
+			setTimeout(function() {document.querySelector('#letterbox' + tileResult[1]).innerHTML=tileResult[2].toUpperCase(); }, 1000);// fill in letter
+			tileBank.pop(); //pull tile out of bank
+			playerContinue(); // give player option to contine or solve
+		} //end if
+	}); //end second button function
+}
+
+function playerContinue() {
+	clearConsole();
+	console.log('continue or solve');
+}
 
 function cpuTurn() {
 	console.log('cpu turn');
@@ -515,20 +561,81 @@ function tileCheckAnimation(tileArray) {
 
 } // end tileCheckAnimation
 
-function giveTileBank(tileIndex) {
-	tileBank.push(tileIndex, tileList[tileIndex][0]); //push the tileindex and letter
+function giveTileBank() {
+// parseInt(e.target.innerText) - 1
+	let selectedTileIndex = parseInt(this.innerText) - 1;
+
+	tileBank.push([selectedTileIndex, tileList[selectedTileIndex][0]]); //push the tileindex and letter
+	console.log(tileBank);
 
 	if(tileBank.length == 1 && stoppers == 3) { // should only occur once, if the bank only has one tile after activation, ask for another
 		gameConsole.innerHTML = 'Please select one more tile';
+		tileList[selectedTileIndex][1] = true; // flag selected tile as used
+		drawTileBoxes(); //redraw the tile boxes
+		document.querySelector('#tile' + selectedTileIndex).removeEventListener('click', giveTileBank); // remove listener for that tile
 	} else if(tileBank.length == 1 && stoppers != 3) { // no more tiles left
-		for (i=0; i < tileList.length; i++) {
-				if(tileList[i][1] == false) {
-					document.querySelector('#tile' + i).removeEventListener('click', function(e) {
-						giveTileBank(parseInt(e.target.innerText) - 1);
-						console.log(tileResult);
-					});
-				} //end if
+		gameConsole.innerHTML('No more tiles to select');
+		for (i=0; i < tileList.length; i++) { //remove listeners
+			if(tileList[i][1] == false) {
+				document.querySelector('#tile' + i).removeEventListener('click', giveTileBank);
+			} //end if
 		}// end for
-	}
+	} //end if/elseif
 
+	if(tileBank.length == 2) { // bank is now full after a click
+
+		for (i=0; i < tileList.length; i++) { //remove listeners
+			if(tileList[i][1] == false) {
+				document.querySelector('#tile' + i).removeEventListener('click', giveTileBank);
+			} //end if
+		}// end for
+
+		drawTileBank(); //redraw the tile bank
+		tileList[selectedTileIndex][1] = true; // flag selected tile as used
+		drawTileBoxes(); //redraw the tile boxes
+		playerTurnA(); // resume players turn
+	} //end if
 }
+
+function drawTileBank() {
+
+	if(tileBank.length == 1) { tileBank.push(['*', '*']); } //if theres only one letter in the bank, ad a star so it doesnt draw undefined
+
+	if(boardControl==1) { //player has control
+		tileBank4.innerText = '*';
+		tileBank3.innerText = '*';
+		tileBank2.innerText = tileBank[1][1].toUpperCase();
+		tileBank1.innerText = tileBank[0][1].toUpperCase();
+	} //endif
+	if(boardControl==2) { // cpu has control
+		tileBank1.innerText = '*';
+		tileBank2.innerText = '*';
+		tileBank4.innerText = tileBank[1][1].toUpperCase();
+		tileBank3.innerText = tileBank[0][1].toUpperCase();
+	} //endif
+
+} // end drawTileBank
+
+function drawTileBoxes() { //this assumes boxes are already drawn, it just changes the color of used tiles
+
+	tilesLeft = 0; //reset tiles left count
+
+	for(i=0; i<tileList.length; i++) { // if a tile has been used aka the flag at [1] for that tile is true, lower opacity
+		if(tileList[i][1] == true) {
+			document.querySelector('#tile' + i).style.opacity = 0.2;
+		} else { tilesLeft++; } //otherwise, increment remaining tiles end if
+	} //end for
+
+}// end drawTileBoxes
+
+function drawStoppers() {
+	for(i=0; i<3; i++) { // add transparent if stoppers is < i otherwise check to see if it contains transparent and remove if so
+		if(stoppers<=i) {document.querySelector('stopper'+(i+1)).classList.add('transparent'); }
+	 	else {
+			if(document.querySelector('stopper' + (i+1)).classList.contains('transparent')) {
+				document.querySelector('stopper'+ (i+1)).classList.remove('transparent');
+			} // end contains/remove if
+		} // end if/else
+	} // end for
+
+}// end drawStoppers
