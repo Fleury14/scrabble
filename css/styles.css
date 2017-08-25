@@ -44,6 +44,9 @@
   padding-right: 20px;
   border: 2px solid #fff;
 }
+/* End header styles */
+
+/* puzzle / tile area */
 
 .puzzle-bg {
   background-color: #aaa;
@@ -57,8 +60,44 @@
   height: 56px;
   border: 2px solid #fff;
   background-color: #aaa;
-
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 }
+
+.tile {
+  height: 40px;
+  width: 40px;
+  color: #fff;
+  background-color: #00f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.puzzle-letter-box {
+  height: 50px;
+  width: 50px;
+  background-color: #fff;
+  color: #000;
+  font-weight: 500;
+  border: 1px solid red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+}
+
+.puzzle-box-blue {
+  background-color: #427df4;
+}
+
+.puzzle-box-pink {
+  background-color: #f771b0;
+}
+
+
+/* end puzzle/tile area, begin player row */
 
 .player-row {
   margin-top: 5px;
@@ -121,7 +160,7 @@
   height: 80px;
 }
 
-.stopper-box-left, .stopper-box-mid, .stopper-box-rt {
+.stopper {
   width: calc(100%/3);
   height: 30px;
   background-color: #ff0000;
@@ -149,23 +188,52 @@
   padding: 5px;
 }
 
-.puzzle-letter-box {
-  height: 50px;
-  width: 50px;
-  background-color: #fff;
-  color: #000;
-  font-weight: 500;
-  border: 1px solid red;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 24px;
+/* off screen styles */
+
+.tile-check {
+  height: 400px;
+  width: 400px;
+  background-color: blue;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-350%, -50%);
+  transform-origin: center;
+  -webkit-transform-style: preserve-3d;
+  transition: 0.5s all;
+  visibility: hidden;
 }
 
-.puzzle-box-blue {
-  background-color: #427df4;
+.front, .back {
+position: absolute;
+display: flex;
+justify-content: center;
+align-items: center;
+height: 400px;
+width: 400px;
+color: #fff;
+font-size: 8em;
+-webkit-backface-visibility: hidden;
 }
 
-.puzzle-box-pink {
-  background-color: #f771b0;
+.back {
+  transform: rotateY(180deg);
+  background-color: green;
+  font-size: 6em;
+}
+
+.back-wrong {
+  background-color: red;
+}
+
+.tile-check-animation {
+  animation-duration: 2s;
+  animation-name: tile-check-animation;
+  animation-fill-mode: forwards;
+}
+
+@keyframes tile-check-animation {
+  25% {transform: translate(-50%, -50%);}
+  50% {transform: translate(-50%, -50%);}
+  100% {transform: translate(-50%, -50%) rotatey(180deg);}
 }

@@ -1,6 +1,6 @@
 /* jshint esversion: 6 */
 
-let wordList = ['rhythmic', 'photon', 'adverb', 'infinite', 'discourage'];
+let wordList = ['rhythmic', 'photon', 'adverb', 'infinite', 'eclipse'];
 // word list for all puzzles
 // word conditions: no more than 10 letters, must not use every vowel
 
@@ -21,12 +21,19 @@ let playerAnswered = 0;
 let consanantList = 'bcdfghjklmnpqrstvwxyz';
 let vowelList = 'aeiou';
 let tileList = []; // list of tiles for main puzzles
+let stoppers = 0; // number of stoppers in play
+let tileResult = []; //need to scope the array that will contain the result of a tile check
+let tileBank = []; //holder for the selected tiles
 
 
 // declare puzzle box ID
 const puzzleBox = document.getElementById('puzzle-box');
 const gameConsole = document.getElementById('gameConsole');
 const roundCount = document.querySelector('#roundCount');
+const tileBox = document.querySelector('#tileBox');
+const tileAnimFront = document.querySelector('#tileAnimFront');
+const tileAnimBack = document.querySelector('#tileAnimBack');
+const tileAnimBox = document.querySelector('#tileAnimBox');
 let insertedElement = '';
 
 
@@ -222,6 +229,7 @@ function beginFirstRound() {
 	let index = wordList.indexOf(currentWord);
 	wordList.splice(index, 1); // remove current word from word list
 	currentRound++; // increment round
+	stoppers = 3;
 	clearConsole();
 	puzzleBox.innerHTML=''; // clear puzzleBox
 	bonusTileIndex = 0; // reset bonus tile
@@ -271,10 +279,59 @@ function beginFirstRound() {
       tiledWord += randCons;
       break;
     } //end if
-  } //end vowel while loop
-	console.log(tiledWord);
+  } //end 1st consnt while loop
+	while (true) { // applying 2 random consanants as a stopper
+		randCons = consanantList.charAt(Math.floor(Math.random()*consanantList.length));
+	// Note: For now, the random cons's will always be a vowel not used
+		if (currentWord.indexOf(randCons) < 0) {
+			tiledWord += randCons;
+			break;
+		} //end if
+	} //end 1st consnt while loop
+
+	//initialize tile array
+	for (i=0; i < tiledWord.length; i++) {
+		tileList.push([tiledWord.charAt(i), false]);
+	}
+	tileList = shuffle(tileList); //shuffle tiles
+
+	//append tiles to tile-box
+	for (i=0; i < tileList.length; i++) {
+		insertedElement = document.createElement('div');
+		insertedElement.setAttribute('class', 'tile'); //give all tiles class name tile
+		insertedElement.setAttribute('id', 'tile' + i); // give all tiles id tile0, tile1, etc..
+		insertedElement.innerHTML = i + 1;
+		tileBox.appendChild(insertedElement);
+	}
+	tileBox.style.visibility = 'visible'; // show tile box
+
+	// give a turn to whoever is in cotrol of the board
+	if (boardControl == 1) { playerTurn(); }
+	else { cpuTurn(); }
 
 } // end beginFirstRound
+
+function playerTurn() {
+	// notify player to click on a tile
+	appendOutputConsole('p', 'Please click on one of the numbered tiles to continue');
+
+
+
+	//add eventlisteners for tiles that are still in play
+	for (i=0; i < tileList.length; i++) {
+			if(tileList[i][1] == false) {
+				document.querySelector('#tile' + i).addEventListener('click', function(e) {
+					checkPlayerTile(parseInt(e.target.innerText) - 1);
+					console.log(tileResult);
+				});
+			} //end if
+	}// end for
+
+}// end playerTurn()
+
+function cpuTurn() {
+	console.log('cpu turn');
+}
 
 // Function if buzzer is clicked
   function playerOneBuzzer() {
@@ -376,6 +433,83 @@ function appendOutputConsole(element, value, className, idName, onClick) {
   gameConsole.appendChild(insertedElement);
 }
 
-function clearConsole() {
+function clearConsole() { // function to clear screen
 	gameConsole.innerHTML = '';
+}
+
+function shuffle(array) { //function to shuffle array -ty stack overflow-
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
+function checkPlayerTile(tile) {
+
+	tileResult = []; // reset result array
+
+
+	let selectedLetter = tileList[tile][0]; // get the letter on the tile
+	let breakLoop = false; // allow the loop to break prematurely if a home has been found for the letter
+	//note -- look at possible instances and randomize multiple letter instances. right now,  it will always fill in the first occurrence of a letter
+
+	for(i=0; i < currentWord.length; i++) { // check to see, from the beginning, if each letter box matches the letter of the current word AND it hasnt been filled in
+
+		if(breakLoop == true) { break; } //break the loop if necessary
+
+		if( document.querySelector('#letter-box' + i).innerText == '' && selectedLetter == currentWord.charAt(i) ) {
+			tileResult.push(true);
+			tileResult.push(i);
+			tileResult.push(selectedLetter);
+			breakLoop = true; // dont allow any more letter checks
+		} //end if
+	}// end for
+
+	if(tileResult.length == 0) { //if the tileresult array is empty, that means there was no home for the letter. stopper time!
+		tileResult.push(false);
+	} //end if
+	console.log(tileResult);
+	//run animation for tileResult
+	tileCheckAnimation(tileResult);
+
+} //end checkplayertile()
+
+function tileCheckAnimation(tileArray) {
+
+	console.log(`TileArray: ${tileArray}`)
+
+	//prepare front end of tile animation
+	tileAnimFront.innerText = tileArray[2].toUpperCase();
+
+	//prepare back end of tile animation
+	if(tileArray[0]==false) {
+		tileAnimBack.innerText = 'Wrong!';
+		tileAnimBack.classList.add('back-wrong');
+	} else {
+		tileAnimBack.innerText = 'Correct!';
+	} //end if
+
+	tileAnimBox.style.visibility = 'visible'; // start the animation
+	tileAnimBox.classList.add('tile-check-animation');
+	setTimeout(function() {
+		tileAnimBox.style.visibility = 'hidden';
+		tileAnimBox.classList.remove('tile-check-animation');
+		if(tileArray[0]==false) { tileAnimBack.classList.remove('back-wrong'); }
+	}, 2500);
+
+
+
+
 }
