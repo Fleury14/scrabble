@@ -178,6 +178,10 @@
   float: left;
 }
 
+.transparent {
+  background-color: #aaa;
+}
+
 .middle-bot {
   height: 100px;
 }

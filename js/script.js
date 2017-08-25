@@ -13,6 +13,8 @@ let stopTimeFlag = false;
 let roundInstructions = false;  // did player recieve round instructions
 let currentWord = '';
 let currentRound = 0;
+let playerGuess = ''; //players guess on a puzzle
+let playerResult = ''; //end result from a guess
 let boardControl = 0;
 let cpuAnswered = 0;
 let puzzleBonusFlag = 0; // will there be a bonus tile in a puzzle?
@@ -236,6 +238,7 @@ function beginFirstRound() {
 	wordList.splice(index, 1); // remove current word from word list
 	currentRound++; // increment round
 	stoppers = 3; // 3 stoppers are on the board
+	playerBonusFlag = 0; // rest bonus flag
 	clearConsole();
 	puzzleBox.innerHTML=''; // clear puzzleBox
 	bonusTileIndex = 0; // reset bonus tile
@@ -348,12 +351,15 @@ function playerTurnA() {
 			stoppers--; //decrement stoppers and redraw
 			drawStoppers();
 			tileBank.shift(); // pull tile out of bank
+			drawTileBank(); // redraw bank
 			boardControl = 2; // give CPU control
 			cpuContinue(); // ask cpu solve/pull tiles
 		} else { //now if its true though...
 			setTimeout(function() {document.querySelector('#letter-box' + tileResult[1]).innerHTML=tileResult[2].toUpperCase();}, 1000); // fill in letter
+			if(tileResult[1]==bonusTileIndex) {playerBonusFlag = 1;} // activate flag if its a bonus tile
 			tileBank.shift(); //pull tile out of bank
-			playerContinue(); // give player option to contine or solve
+			drawTileBank(); // redraw bank
+			setTimeout(playerContinue(), 1200); // give player option to contine or solve
 		} //end if
 	}); //end first button function
 	consoleButtonB.addEventListener('click', function() {
@@ -362,23 +368,144 @@ function playerTurnA() {
 			stoppers--; //decrement stoppers and redraw
 			drawStoppers();
 			tileBank.pop(); // pull tile out of bank
+			drawTileBank(); // redraw bank
 			boardControl = 2; // give CPU control
 			cpuContinue(); // ask cpu solve/pull tiles
 		} else { //now if its true though...
-			setTimeout(function() {document.querySelector('#letterbox' + tileResult[1]).innerHTML=tileResult[2].toUpperCase(); }, 1000);// fill in letter
+			setTimeout(function() {document.querySelector('#letter-box' + tileResult[1]).innerHTML=tileResult[2].toUpperCase(); }, 1000);// fill in letter
+			if(tileResult[1]==bonusTileIndex) {playerBonusFlag = 1;} // activate flag if its a bonus tile
 			tileBank.pop(); //pull tile out of bank
-			playerContinue(); // give player option to contine or solve
+			drawTileBank(); // redraw bank
+			setTimeout(playerContinue(), 1200); // give player option to contine or solve
 		} //end if
 	}); //end second button function
 }
 
-function playerContinue() {
+function playerContinue() { //at this point, the player has successfully picked the correct letter from the bank and is now give the option to solve
 	clearConsole();
-	console.log('continue or solve');
+	checkTilesLeft();
+	playerGuess = '';// clear playerguess and result vars
+	playerResult = '';
+
+	if(tilesLeft == 0) { //if theres no more tiles left to draw, force solve attempt
+		playerGuess = prompt('There are no more tiles to draw. You must attempt to guess the word. An incorrect guess gives the ponints to the CPU.');
+		playerResult = playerGuess.toLowerCase(); //get solve attempt and process word
+		if(playerResult == currentWord) { //if they are correct
+			alert('You Win!');
+			playerWinsRound();
+		} else {
+			alert('CPU Wins!');
+			cpuWinsRound();
+		} // end result check if
+	}// end tilesleft=0 if
+
+	appendOutputConsole('p', 'Would you like to draw another tile, or attempt to solve? Keep in mind that attempting to solve and failing will give the entire puzzle to the CPU.');
+	if(playerBonusFlag == 1) { appendOutputConsole('p', 'NOTE: There is a bonus for attempting to solve right now!'); } //let player know if theres a possible bonus
+	appendOutputConsole('div', '<button class="continue-button" id="playerDraw">DRAW A TILE</button><button class="continue-button" id="playerSolve">SOLVE PUZZLE</button>', 'flex-container justify-around');
+
+	//set listener for draw button
+	document.querySelector('#playerDraw').addEventListener('click', function() {
+		playerTurn();
+	});
+
+	//set listener for solve button
+	document.querySelector('#playerSolve').addEventListener('click', function() {
+		playerGuess=prompt('Please input your guess.');
+		playerResult=playerGuess.toLowerCase();
+		if(playerResult == currentWord) {
+			alert('You Win!');
+			playerWinsRound();
+		} else {
+			alert('Incorrect. CPU WINS!');
+			cpuWinsRound();
+		} //end result check if
+	}); //end listener function
+
+} // end playercontinue()
+
+function playerWinsRound() {
+	console.log('Player wins round, yay!');
 }
 
 function cpuTurn() {
 	console.log('cpu turn');
+	clearConsole();
+	appendOutputConsole('p', 'CPU is picking a tile....');
+
+	let selectedTile = 0;
+	while(true) { // get a random tile, make sure it hasnt been used, and put it in selectedTile
+		let randNum = Math.floor(Math.random() * tileList.length);
+		if(tileList[randNum][1] == false) {
+			selectedTile = randNum;
+			break;
+		} //end if
+	} //end while loop
+	tileBank.push([selectedTile, tileList[selectedTile][0]]); //add selected tile to the bank
+	tileList[selectedTile][1] = true; // flag that tile as used
+	drawTileBoxes(); // redraw tiles
+	console.log(`tilebank: ${tileBank}`);
+
+	let tileDisplay = selectedTile + 1
+	setTimeout(function() {
+		appendOutputConsole('p', 'CPU picks tile number: ' + tileDisplay + '.'); //display selected tile
+
+		if(tileBank.length == 1) { // if theres only one tile in the bank, pick another!
+			while(true) { // get a random tile, make sure it hasnt been used, and put it in selectedTile
+				let randNum = Math.floor(Math.random() * tileList.length);
+				if(tileList[randNum][1] == false) {
+					selectedTile = randNum;
+					break;
+				} //end if
+			} //end while loop
+			tileBank.push([selectedTile, tileList[selectedTile][0]]); //add selected tile to the bank
+			tileList[selectedTile][1] = true; // flag that tile as used
+			drawTileBoxes(); // redraw tiles
+			tileDisplay = selectedTile + 1;
+			appendOutputConsole('p', 'CPU also selects tile number: ' + tileDisplay + '.');
+		}
+		appendOutputConsole('div', '<button class="continue-button" id="continue">Continue</button>', 'flex-container justify-center');
+		document.querySelector('#continue').addEventListener('click', cpuTurnA);
+	}, 1500); //end 1.5s index timeout
+
+} //end cpuTurn()
+
+function cpuTurnA() { //CPU now has both tiles and will pick one...
+	console.log('cpu picking tile');
+	clearConsole();
+
+	let randNum = Math.round(Math.random()); // either 0 or 1, to determine which
+	appendOutputConsole('p', 'CPU chooses...');
+
+	setTimeout(function() {
+		checkPlayerTile(tileBank[randNum][0]);
+	}, 1500); //end 1.5s timeout
+
+	setTimeout(function() {
+		if(tileResult == false) { //if the cpu got it wrong
+			stoppers--; //decrement stoppers and redraw
+			drawStoppers();
+			if(randNum == 0) {tileBank.shift();} else {tileBank.pop();}
+			drawTileBank(); // redraw bank
+			boardControl = 1; // give CPU control
+			playerContinue(); // ask cpu solve/pull tiles
+		} else { //cpu got it right
+			document.querySelector('#letter-box' + tileResult[1]).innerHTML=tileResult[2].toUpperCase(); // fill in letter
+			if(tileResult[1]==bonusTileIndex) {playerBonusFlag = 1;} // activate flag if its a bonus tile
+			if(randNum == 0) {tileBank.shift();} else {tileBank.pop();}
+			drawTileBank(); // redraw bank
+			appendOutputConsole('div', '<button class="continue-button" id="continue">CONTINUE</button>', 'flex-container justify-center');
+			document.querySelector('#continue').addEventListener('click', cpuContinue);
+		}
+	}, 3000)
+
+} //end cpuTurnA()
+
+function cpuContinue() {
+	console.log('cpu gets chance to continue');
+}
+
+function cpuWinsRound() {
+	console.log('cpu wins round! another victory for my kind.');
 }
 
 // Function if buzzer is clicked
@@ -438,8 +565,8 @@ function buzzerActivation() {
       switch(buzzerInstance) {
 
         case 0: // Case 0 -- First round
-          var playerGuess = prompt('Buzzer Activated! Please input your guess. Remember, spelling counts');
-          var playerResult = playerGuess.toLowerCase();
+          playerGuess = prompt('Buzzer Activated! Please input your guess. Remember, spelling counts');
+          playerResult = playerGuess.toLowerCase();
           // ask player for a guess, and make it lower case to make it case insensitive
           console.log('guess:' + playerResult + ' answer:' + currentWord);
 
@@ -562,7 +689,11 @@ function tileCheckAnimation(tileArray) {
 } // end tileCheckAnimation
 
 function giveTileBank() {
-// parseInt(e.target.innerText) - 1
+	// if the bank has an asterisk in it, remove it
+	if(tileBank.length == 2) { //make sure it doesnt check for asterisks when theres only 0 or 1 values in the bank
+		if(tileBank[1][1] == '*') {tileBank.pop();}
+	}
+	// parseInt(e.target.innerText) - 1
 	let selectedTileIndex = parseInt(this.innerText) - 1;
 
 	tileBank.push([selectedTileIndex, tileList[selectedTileIndex][0]]); //push the tileindex and letter
@@ -629,13 +760,20 @@ function drawTileBoxes() { //this assumes boxes are already drawn, it just chang
 }// end drawTileBoxes
 
 function drawStoppers() {
-	for(i=0; i<3; i++) { // add transparent if stoppers is < i otherwise check to see if it contains transparent and remove if so
-		if(stoppers<=i) {document.querySelector('stopper'+(i+1)).classList.add('transparent'); }
+	for(i=1; i<4; i++) { // add transparent if stoppers is < i otherwise check to see if it contains transparent and remove if so
+		if(stoppers<i) {document.querySelector('#stopper'+i).classList.add('transparent'); }
 	 	else {
-			if(document.querySelector('stopper' + (i+1)).classList.contains('transparent')) {
-				document.querySelector('stopper'+ (i+1)).classList.remove('transparent');
+			if(document.querySelector('#stopper' + i).classList.contains('transparent')) {
+				document.querySelector('#stopper'+ i).classList.remove('transparent');
 			} // end contains/remove if
 		} // end if/else
 	} // end for
 
 }// end drawStoppers
+
+function checkTilesLeft() { //updated the tilesLeft var with the current number of selected tiles
+	tilesLeft = 0; // reset
+	for(i=0; i<tileList.length; i++) {
+		if(tileList[i][1] == false) { tilesLeft++; }
+	} //end for
+} //end checkTilesLeft()
