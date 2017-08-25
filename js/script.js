@@ -34,6 +34,8 @@ const tileBox = document.querySelector('#tileBox');
 const tileAnimFront = document.querySelector('#tileAnimFront');
 const tileAnimBack = document.querySelector('#tileAnimBack');
 const tileAnimBox = document.querySelector('#tileAnimBox');
+const tileBank1 = document.querySelector('#tileBank1');
+const tileBank2 = document.querySelector('#tileBank2');
 let insertedElement = '';
 
 
@@ -321,7 +323,7 @@ function playerTurn() {
 	for (i=0; i < tileList.length; i++) {
 			if(tileList[i][1] == false) {
 				document.querySelector('#tile' + i).addEventListener('click', function(e) {
-					checkPlayerTile(parseInt(e.target.innerText) - 1);
+					giveTileBank(parseInt(e.target.innerText) - 1);
 					console.log(tileResult);
 				});
 			} //end if
@@ -479,6 +481,8 @@ function checkPlayerTile(tile) {
 
 	if(tileResult.length == 0) { //if the tileresult array is empty, that means there was no home for the letter. stopper time!
 		tileResult.push(false);
+		tileResult.push(i);
+		tileResult.push(selectedLetter);
 	} //end if
 	console.log(tileResult);
 	//run animation for tileResult
@@ -509,7 +513,22 @@ function tileCheckAnimation(tileArray) {
 		if(tileArray[0]==false) { tileAnimBack.classList.remove('back-wrong'); }
 	}, 2500);
 
+} // end tileCheckAnimation
 
+function giveTileBank(tileIndex) {
+	tileBank.push(tileIndex, tileList[tileIndex][0]); //push the tileindex and letter
 
+	if(tileBank.length == 1 && stoppers == 3) { // should only occur once, if the bank only has one tile after activation, ask for another
+		gameConsole.innerHTML = 'Please select one more tile';
+	} else if(tileBank.length == 1 && stoppers != 3) { // no more tiles left
+		for (i=0; i < tileList.length; i++) {
+				if(tileList[i][1] == false) {
+					document.querySelector('#tile' + i).removeEventListener('click', function(e) {
+						giveTileBank(parseInt(e.target.innerText) - 1);
+						console.log(tileResult);
+					});
+				} //end if
+		}// end for
+	}
 
 }
