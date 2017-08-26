@@ -16,20 +16,35 @@
   align-items: center;
 }
 
+.clearfix:after {
+  content: ' ';
+  clear: both;
+  height: 0;
+  visibility: hidden;
+  display: block;
+}
+
 /*End Global Styles*/
 
 .screen-background {
   background-color: #aaa;
-  height: 720px;
+  height: 520px;
 }
+
+
 
 .bluesquare-background {
   background-color: #7986b9;
-  height: 720px;
+  height: 520px;
   background-image: linear-gradient(0deg, transparent 48%, #fff 50%, transparent 52%), linear-gradient(90deg, transparent 48%, #fff 50%, transparent 52%);
   background-size: 50px 50px;
   border-right: 2px solid #fff;
   border-left: 2px solid #fff;
+}
+@media only screen and (max-width: 768px) {
+  .screen-background, .bluesquare-background {
+    height: 100%;
+  }
 }
 
 .header-col {
@@ -108,6 +123,8 @@
   height: 200px;
 }
 
+
+
 .player-background {
   background-color: #aaa;
   border: 1px solid #fff;
@@ -145,6 +162,12 @@
   height: 50px;
   background-color: #7986b9;
   border: 2px solid #fff;
+}
+
+@media only screen and (max-width: 768px) {
+  .letter-box, .player-name, .player-score {
+    width: 100%
+  }
 }
 
 .middle-top {
@@ -194,6 +217,12 @@
   font-family: monospace;
   height: 213px;
   border: 2px solid #fff;
+}
+
+@media only screen and (max-width: 768px) {
+  .console-background {
+    height: 300px;
+  }
 }
 
 .continue-button {
