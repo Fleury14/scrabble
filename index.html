@@ -13,7 +13,7 @@
     <div class="container bluesquare-background"> <!-- Begin blue tile bg container -->
       <div class="row"> <!-- begin header row -->
         <div class="col-xs-12 header-col"> <!-- Begin header -->
-          <p>Scrambble</p>
+          <p>Word Fight</p>
         </div> <!-- End header  -->
       </div> <!-- end header row -->
       <div class="row"> <!-- Begin puzzle row -->
@@ -25,7 +25,8 @@
         <div class="col-sm-8 col-sm-offset-2 tile-cont" id="tileBox"></div>
       </div> <!-- end tile row -->
       <div class="row player-row"> <!-- Begin player row -->
-        <div class="col-xs-4 col-xs-offset-1 player-background flex-container align-center"> <!-- Begin Player 1 container -->
+
+        <div class="col-xs-6 col-sm-4 col-sm-offset-1 clearfix player-background flex-container align-center"> <!-- Begin Player 1 container -->
           <div class="player-name flex-container justify-center align-center"> <!-- Begin Name container -->
             <p id="player-1-name">Player 1</p>
           </div> <!-- End name container -->
@@ -39,7 +40,22 @@
             </div>
           </div> <!-- End letterbox container -->
         </div> <!-- End Player 1 container -->
-        <div class="col-xs-2"> <!-- Begin Middle area -->
+        <div class="col-xs-6 col-sm-4 col-sm-push-2 clearfix player-background flex-container align-center"> <!-- Begin Player 2 container -->
+          <div class="player-name flex-container justify-center align-center"> <!-- Begin Name container -->
+            <p>CPU</p>
+          </div> <!-- End name container -->
+          <div class="player-score flex-container justify-center align-center"> <!-- Begin score container -->
+            <p id=cpuScoreBox>Score: 0</p>
+          </div> <!-- End score container -->
+          <div class="letter-box"> <!-- Begin letterbox container -->
+            <div class="row">
+              <div class="col-xs-6 tilebank-box flex-container justify-center align-center" id="tileBank3"></div>
+              <div class="col-xs-6 tilebank-box flex-container justify-center align-center" id="tileBank4"></div>
+            </div>
+          </div> <!-- End letterbox container -->
+        </div> <!-- End player 2 container -->
+
+        <div class="col-xs-12 col-sm-2 col-sm-pull-4 clearfix"> <!-- Begin Middle area -->
           <div class="middle-top flex-container justify-center align-center">
             <div class="round text-center">
               <p>Round</p>
@@ -55,28 +71,16 @@
             </div>
           </div>
         </div> <!-- End middle area -->
-        <div class="col-xs-4 player-background flex-container align-center"> <!-- Begin Player 2 container -->
-          <div class="player-name flex-container justify-center align-center"> <!-- Begin Name container -->
-            <p>CPU</p>
-          </div> <!-- End name container -->
-          <div class="player-score flex-container justify-center align-center"> <!-- Begin score container -->
-            <p id=cpuScoreBox>Score: 0</p>
-          </div> <!-- End score container -->
-          <div class="letter-box"> <!-- Begin letterbox container -->
-            <div class="row">
-              <div class="col-xs-6 tilebank-box flex-container justify-center align-center" id="tileBank3"></div>
-              <div class="col-xs-6 tilebank-box flex-container justify-center align-center" id="tileBank4"></div>
-            </div>
-          </div> <!-- End letterbox container -->
-        </div> <!-- End player 2 container -->
       </div> <!-- End Player Row -->
-      <div class="row"> <!-- Begin console row -->
-        <div class="col-xs-12 console-background"> <!-- Begin console container -->
-          <p id="gameConsole">Console</p>
-        </div> <!-- End console container -->
-      </div> <!-- End console row -->
     </div> <!-- End blue tile bg container -->
   </div> <!-- End main container -->
+  <div class="container-fluid">
+    <div class="row"> <!-- Begin console row -->
+      <div class="col-sm-12 console-background"> <!-- Begin console container -->
+        <p id="gameConsole">Console</p>
+      </div> <!-- End console container -->
+    </div> <!-- End console row -->
+  </div>
   <!-- Begin offscreen stuff for animations -->
   <div class="tile-check" id="tileAnimBox"> <!-- begin tilecheck animation box -->
     <div class="front" id="tileAnimFront">F</div>
