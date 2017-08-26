@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Arvo|Bungee+Shade');
+
 /*Global Styles*/
 
 .flex-container {
@@ -24,11 +26,24 @@
   display: block;
 }
 
+.ridge-border {
+  border: 10px ridge #ffc;
+}
+
+.ridge-border-sm {
+  border: 5px ridge #ffc;
+}
+
+.small-shadow {
+  box-shadow: 0px 0px 3px 1px #000;
+}
+
 /*End Global Styles*/
 
 .screen-background {
   background-color: #aaa;
   height: 520px;
+  font-family: 'Arvo', 'serif';
 }
 
 
@@ -56,12 +71,15 @@
 
 .header-col p {
   background-color: #aaa;
-  color: #fff;
+  color: #000;
   font-size: 40px;
   display: inline-block;
   padding-left: 20px;
   padding-right: 20px;
-  border: 2px solid #fff;
+  font-family: 'Bungee Shade', cursive;
+  /*border: 2px solid #fff;*/
+  /*border: 7px dotted #000;*/
+	/*box-shadow: inset 0 -3px 0 0 #000, 0 3px 0 0 #000, 3px 0 0 0 #000, -3px 0 0 0 #000;*/
 }
 /* End header styles */
 
@@ -69,7 +87,6 @@
 
 .puzzle-bg {
   background-color: #aaa;
-  border: 2px solid #fff;
   height: 100px;
 }
 
@@ -92,6 +109,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  border: 1px solid #eee;
 }
 
 .puzzle-letter-box {
@@ -127,7 +145,6 @@
 
 .player-background {
   background-color: #aaa;
-  border: 1px solid #fff;
   height: 100%;
   flex-direction: column;
   justify-content: space-around;
@@ -139,7 +156,6 @@
 
 .player-name {
   background-color: #7986b9;
-  border: 2px solid #fff;
   color: #fff;
   height: 30px;
   width: 30%;
@@ -149,7 +165,6 @@
 
 .player-score {
   background-color: #7986b9;
-  border: 2px solid #fff;
   color: #fff;
   height: 50px;
   width: 60%;
@@ -161,7 +176,7 @@
   width: 40%;
   height: 50px;
   background-color: #7986b9;
-  border: 2px solid #fff;
+  border: 4px dotted #f00;
 }
 
 @media only screen and (max-width: 768px) {
@@ -182,14 +197,21 @@
 
 .round {
   background-color: #aaa;
-  border: 2px solid #fff;
-  padding: 10px
+  padding: 5px
+}
+
+.round p {
+  margin: 0px;
+}
+
+.round-count {
+  font-family: 'Bungee Shade', cursive;
+  font-size: 3em
 }
 
 .stoppers {
   width: 75%;
   background-color: #aaa;
-  border: 2px solid #fff;
   height: 80px;
 }
 
@@ -229,6 +251,8 @@
   background-color: #000;
   border: 2px solid #ff0000;
   padding: 5px;
+  border-radius: 10%;
+  margin-top: 25px;
 }
 
 .letter-button-padding {

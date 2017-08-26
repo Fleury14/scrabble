@@ -1,4 +1,5 @@
-/* jshint esversion: 6 */
+/* jshint esversion: 6, indent: 1 */
+
 
 let wordList = ['rhythmic', 'photon', 'adverb', 'infinite', 'eclipse', 'abduction', 'exhibit', 'machine', 'daylight', 'equalizer', 'quantity', 'tranquilze', 'hurricane', 'impact', 'possible' ];
 // word list for all puzzles
@@ -648,7 +649,7 @@ function buzzerActivation() {
 
         case 0:
           alert('CPU INTERCEPT!');
-
+					clearConsole();
           var textOutput = document.createElement('p');
           // even if the cpu buzzes in, theres only a 75% chance they answer correctly off the bad, this random number checks that
           var cpuGuess=Math.random();
