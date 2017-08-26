@@ -1,12 +1,13 @@
 /* jshint esversion: 6 */
 
-let wordList = ['rhythmic', 'photon', 'adverb', 'infinite', 'eclipse'];
+let wordList = ['rhythmic', 'photon', 'adverb', 'infinite', 'eclipse', 'abduction', 'exhibit', 'machine', 'daylight', 'equalizer', 'quantity', 'tranquilze', 'hurricane', 'impact', 'possible' ];
 // word list for all puzzles
 // word conditions: no more than 10 letters, must not use every vowel
 
 let usedWords = [];
 
 // Global var init: buzzer status, timer status, puzzle answer
+let player1Name = '';
 let buzzer = false;
 let buzzerInstance = 0;
 let stopTimeFlag = false;
@@ -28,6 +29,8 @@ let stoppers = 0; // number of stoppers in play
 let tileResult = []; //need to scope the array that will contain the result of a tile check
 let tileBank = []; //holder for the selected tiles
 let tilesLeft = 0; //number of tiles remaining
+let playerScore = 0;
+let cpuScore = 0;
 
 
 // declare puzzle box ID
@@ -42,6 +45,8 @@ const tileBank1 = document.querySelector('#tileBank1');
 const tileBank2 = document.querySelector('#tileBank2');
 const tileBank3 = document.querySelector('#tileBank3');
 const tileBank4 = document.querySelector('#tileBank4');
+const playerScoreBox = document.querySelector('#playerScoreBox');
+const cpuScoreBox = document.querySelector('#cpuScoreBox');
 let insertedElement = '';
 
 
@@ -91,7 +96,7 @@ function beginGame() {
   gameConsole.innerHTML = "";
 
 // Prompt player name
-  let player1Name = prompt('Please input your name');
+player1Name = prompt('Please input your name');
 
 // and change it in the HTML
   document.getElementById('player-1-name').innerHTML = player1Name;
@@ -198,6 +203,7 @@ function firstPuzzleStart() {
   } //end if
   console.log(cpuAnswered);
 
+
   if (cpuAnswered == 1) { //output results if cpu answers
     stopTimeFlag = true;
     appendOutputConsole('p', 'CPU answered correctly');
@@ -237,8 +243,18 @@ function beginFirstRound() {
 	let index = wordList.indexOf(currentWord);
 	wordList.splice(index, 1); // remove current word from word list
 	currentRound++; // increment round
+	document.querySelector('#roundCount').innerText = currentRound; // display round count in html
 	stoppers = 3; // 3 stoppers are on the board
+	drawStoppers();
 	playerBonusFlag = 0; // rest bonus flag
+	puzzleBox.innerHTML = ''; //reset puzzlebox
+	tileBox.innerHTML = ''; // and reset tile box
+	tileList = []; //reset tile array
+	tileBank = []; //reset tile bank
+	tileBank1.innerHTML = '';
+	tileBank2.innerHTML = '';
+	tileBank3.innerHTML = '';
+	tileBank4.innerHTML = '';
 	clearConsole();
 	puzzleBox.innerHTML=''; // clear puzzleBox
 	bonusTileIndex = 0; // reset bonus tile
@@ -351,8 +367,8 @@ function playerTurnA() {
 			stoppers--; //decrement stoppers and redraw
 			drawStoppers();
 			tileBank.shift(); // pull tile out of bank
-			drawTileBank(); // redraw bank
 			boardControl = 2; // give CPU control
+			drawTileBank(); // redraw bank
 			cpuContinue(); // ask cpu solve/pull tiles
 		} else { //now if its true though...
 			setTimeout(function() {document.querySelector('#letter-box' + tileResult[1]).innerHTML=tileResult[2].toUpperCase();}, 1000); // fill in letter
@@ -368,8 +384,8 @@ function playerTurnA() {
 			stoppers--; //decrement stoppers and redraw
 			drawStoppers();
 			tileBank.pop(); // pull tile out of bank
-			drawTileBank(); // redraw bank
 			boardControl = 2; // give CPU control
+			drawTileBank(); // redraw bank
 			cpuContinue(); // ask cpu solve/pull tiles
 		} else { //now if its true though...
 			setTimeout(function() {document.querySelector('#letter-box' + tileResult[1]).innerHTML=tileResult[2].toUpperCase(); }, 1000);// fill in letter
@@ -425,12 +441,38 @@ function playerContinue() { //at this point, the player has successfully picked 
 
 function playerWinsRound() {
 	console.log('Player wins round, yay!');
-}
+	clearConsole();
+	let puzzleWorth = 0;
+
+	if(playerBonusFlag == 1 && puzzleBonusFlag == 1) {puzzleWorth += 200;} //assign correct worth based on bonus tile
+	else if(playerBonusFlag == 1 && puzzleBonusFlag == 2) {puzzleWorth += 150;}
+	else {puzzleWorth += 100;}
+
+	for(i=0; i<tileList.length; i++) {
+		if(tileList[i][1]==false) {puzzleWorth += 10;}
+	} //end for
+
+	playerScore += puzzleWorth; //tack on puzzle value to the player score
+	document.querySelector('#playerScoreBox').innerText = 'Score: ' + playerScore;
+	if(currentRound == 5) {gameOver();}
+	else {
+		appendOutputConsole('p', 'Congratulations! You got ' + puzzleWorth + ' points! Get ready for the next round.');
+		appendOutputConsole('div', '<button class="continue-button" id="continue">Continue</button>', 'flex-container justify-center');
+		boardControl = 2; // Give cpu control to start
+		document.querySelector('#continue').addEventListener('click', beginFirstRound);
+	}
+
+} //end playerWinsRound
 
 function cpuTurn() {
 	console.log('cpu turn');
 	clearConsole();
 	appendOutputConsole('p', 'CPU is picking a tile....');
+
+	if(tileBank.length == 2) {
+		if(tileBank[1][1]=='*') {tileBank.pop();}
+	}
+
 
 	let selectedTile = 0;
 	while(true) { // get a random tile, make sure it hasnt been used, and put it in selectedTile
@@ -474,14 +516,17 @@ function cpuTurnA() { //CPU now has both tiles and will pick one...
 	clearConsole();
 
 	let randNum = Math.round(Math.random()); // either 0 or 1, to determine which
-	appendOutputConsole('p', 'CPU chooses...');
+	appendOutputConsole('span', 'CPU chooses... ');
 
 	setTimeout(function() {
 		checkPlayerTile(tileBank[randNum][0]);
+		appendOutputConsole('span', tileBank[randNum][1] + '!');
+		appendOutputConsole('br');
 	}, 1500); //end 1.5s timeout
 
 	setTimeout(function() {
-		if(tileResult == false) { //if the cpu got it wrong
+
+		if(tileResult[0] == false) { //if the cpu got it wrong
 			stoppers--; //decrement stoppers and redraw
 			drawStoppers();
 			if(randNum == 0) {tileBank.shift();} else {tileBank.pop();}
@@ -502,10 +547,81 @@ function cpuTurnA() { //CPU now has both tiles and will pick one...
 
 function cpuContinue() {
 	console.log('cpu gets chance to continue');
-}
+	clearConsole();
+	checkTilesLeft();
+
+	if(tilesLeft == 0) {
+		appendOutputConsole('p', 'CPU has no choice but to attempt to solve..');
+		let randNum = Math.random();
+		if(randNum < 0.75) { //give cpu a 75% chance to correctly solve a pizzle that has nearly been filled in
+			setTimeout(function() {
+				appendOutputConsole('p', '...and correctly guess the word: ' + currentWord + '!');
+				appendOutputConsole('div', '<button class="continue-button" id="continue">CONTINUE</button>', 'flex-container justify-center');
+				document.querySelector('#continue').addEventListener('click', cpuWinsRound);
+			}, 1500); //end solved correctly function
+		} else { //cpu gets it wrong :(
+			appendOutputConsole('p', '...and did not know the answer: ' + currentWord + '!');
+			appendOutputConsole('div', '<button class="continue-button" id="continue">CONTINUE</button>', 'flex-container justify-center');
+			document.querySelector('#continue').addEventListener('click', playerWinsRound);
+		} //end if solved correctly
+	} else {//end if tiles == 0
+
+		let cpuSolveChance = 0.05; //initialize cpu solve chance
+		//cpusolving forumla 5% + 5% for each filled in letter
+		for(i=0; i<currentWord.length; i++) {
+			if(document.querySelector('#letter-box' + i) != '') { cpuSolveChance += 0.05; }
+		}//end for
+
+		let randNum2 = Math.random();
+		if(randNum2 > cpuSolveChance) {
+			setTimeout(function() {
+				appendOutputConsole('p', 'CPU does not know the answer and will select anothe tile.');
+				appendOutputConsole('div', '<button class="continue-button" id="continue">CONTINUE</button>', 'flex-container justify-center');
+				document.querySelector('#continue').addEventListener('click', cpuTurn);
+			}, 1500); //end timeout
+		} else {
+			setTimeout(function() {
+				appendOutputConsole('p', 'CPU knows the answer, and correctly guesses ' + currentWord + '!');
+				appendOutputConsole('div', '<button class="continue-button" id="continue">CONTINUE</button>', 'flex-container justify-center');
+				document.querySelector('#continue').addEventListener('click', cpuWinsRound);
+			}, 1500); //end if
+		} // end solvechance if/else
+	} //end large if/else
+}// end cpucontinue()
 
 function cpuWinsRound() {
 	console.log('cpu wins round! another victory for my kind.');
+	clearConsole();
+	let puzzleWorth = 0;
+
+	if(playerBonusFlag == 1 && puzzleBonusFlag == 1) {puzzleWorth += 200;} //assign correct worth based on bonus tile
+	else if(playerBonusFlag == 1 && puzzleBonusFlag == 2) {puzzleWorth += 150;}
+	else {puzzleWorth += 100;}
+
+	for(i=0; i<tileList.length; i++) {
+		if(tileList[i][1]==false) {puzzleWorth += 10;}
+	} //end for
+
+	cpuScore += puzzleWorth; //tack on puzzle value to the player score
+	document.querySelector('#cpuScoreBox').innerText = 'Score: ' + cpuScore;
+	if(currentRound == 5) {gameOver();}
+	else {
+		appendOutputConsole('p', 'The CPU got ' + puzzleWorth + ' points! Get ready for the next round.');
+		appendOutputConsole('div', '<button class="continue-button" id="continue">Continue</button>', 'flex-container justify-center');
+		boardControl = 1; // Give player control to start
+		document.querySelector('#continue').addEventListener('click', beginFirstRound);
+	}
+}
+
+function gameOver() {
+	console.log('game ovah!');
+	clearConsole();
+
+	appendOutputConsole('p', 'Final Score - ' + player1Name + ' ' + playerScore + ' points. CPU: ' + cpuScore + 'points.');
+	if(playerScore > cpuScore) {appendOutputConsole('p','Congrats, you win!');}
+	else {appendOutputConsole('p', 'The CPU wins. One step closer to SkyNet.');}
+
+	appendOutputConsole('p', 'gameOver');
 }
 
 // Function if buzzer is clicked
