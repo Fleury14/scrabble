@@ -34,19 +34,19 @@ let cpuScore = 0;
 
 
 // declare puzzle box ID
-const puzzleBox = document.getElementById('puzzle-box');
-const gameConsole = document.getElementById('gameConsole');
-const roundCount = document.querySelector('#roundCount');
-const tileBox = document.querySelector('#tileBox');
-const tileAnimFront = document.querySelector('#tileAnimFront');
-const tileAnimBack = document.querySelector('#tileAnimBack');
-const tileAnimBox = document.querySelector('#tileAnimBox');
-const tileBank1 = document.querySelector('#tileBank1');
-const tileBank2 = document.querySelector('#tileBank2');
-const tileBank3 = document.querySelector('#tileBank3');
-const tileBank4 = document.querySelector('#tileBank4');
-const playerScoreBox = document.querySelector('#playerScoreBox');
-const cpuScoreBox = document.querySelector('#cpuScoreBox');
+var puzzleBox = document.getElementById('puzzle-box');
+var gameConsole = document.getElementById('gameConsole');
+var roundCount = document.querySelector('#roundCount');
+var tileBox = document.querySelector('#tileBox');
+var tileAnimFront = document.querySelector('#tileAnimFront');
+var tileAnimBack = document.querySelector('#tileAnimBack');
+var tileAnimBox = document.querySelector('#tileAnimBox');
+var tileBank1 = document.querySelector('#tileBank1');
+var tileBank2 = document.querySelector('#tileBank2');
+var tileBank3 = document.querySelector('#tileBank3');
+var tileBank4 = document.querySelector('#tileBank4');
+var playerScoreBox = document.querySelector('#playerScoreBox');
+var cpuScoreBox = document.querySelector('#cpuScoreBox');
 let insertedElement = '';
 
 
