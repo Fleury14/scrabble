@@ -13,11 +13,11 @@
     <div class="container bluesquare-background"> <!-- Begin blue tile bg container -->
       <div class="row"> <!-- begin header row -->
         <div class="col-xs-12 header-col"> <!-- Begin header -->
-          <p>Word Fight</p>
+          <p class="ridge-border">Word Fight</p>
         </div> <!-- End header  -->
       </div> <!-- end header row -->
       <div class="row"> <!-- Begin puzzle row -->
-        <div id="puzzle-box" class="col-sm-8 col-sm-offset-2 puzzle-bg flex-container align-center justify-center"> <!-- Begin puzzle container col -->
+        <div id="puzzle-box" class="col-sm-8 col-sm-offset-2 puzzle-bg flex-container align-center justify-center ridge-border"> <!-- Begin puzzle container col -->
 
         </div> <!-- End puzzle container col -->
       </div> <!-- End puzzle row -->
@@ -26,28 +26,28 @@
       </div> <!-- end tile row -->
       <div class="row player-row"> <!-- Begin player row -->
 
-        <div class="col-xs-6 col-sm-4 col-sm-offset-1 clearfix player-background flex-container align-center"> <!-- Begin Player 1 container -->
-          <div class="player-name flex-container justify-center align-center"> <!-- Begin Name container -->
+        <div class="col-xs-6 col-sm-4 col-sm-offset-1 clearfix player-background flex-container align-center ridge-border-sm"> <!-- Begin Player 1 container -->
+          <div class="player-name small-shadow flex-container justify-center align-center"> <!-- Begin Name container -->
             <p id="player-1-name">Player 1</p>
           </div> <!-- End name container -->
-          <div class="player-score flex-container justify-center align-center"> <!-- Begin score container -->
+          <div class="player-score small-shadow flex-container justify-center align-center"> <!-- Begin score container -->
             <p id="playerScoreBox">Score: 0</p>
           </div> <!-- End score container -->
-          <div class="letter-box"> <!-- Begin letterbox container -->
+          <div class="letter-box small-shadow "> <!-- Begin letterbox container -->
             <div class="row">
               <div class="col-xs-6 tilebank-box flex-container justify-center align-center" id="tileBank1"></div>
               <div class="col-xs-6 tilebank-box flex-container justify-center align-center" id="tileBank2"></div>
             </div>
           </div> <!-- End letterbox container -->
         </div> <!-- End Player 1 container -->
-        <div class="col-xs-6 col-sm-4 col-sm-push-2 clearfix player-background flex-container align-center"> <!-- Begin Player 2 container -->
-          <div class="player-name flex-container justify-center align-center"> <!-- Begin Name container -->
+        <div class="col-xs-6 col-sm-4 col-sm-push-2 clearfix player-background flex-container align-center ridge-border-sm"> <!-- Begin Player 2 container -->
+          <div class="player-name small-shadow flex-container justify-center align-center"> <!-- Begin Name container -->
             <p>CPU</p>
           </div> <!-- End name container -->
-          <div class="player-score flex-container justify-center align-center"> <!-- Begin score container -->
+          <div class="player-score small-shadow flex-container justify-center align-center"> <!-- Begin score container -->
             <p id=cpuScoreBox>Score: 0</p>
           </div> <!-- End score container -->
-          <div class="letter-box"> <!-- Begin letterbox container -->
+          <div class="letter-box small-shadow "> <!-- Begin letterbox container -->
             <div class="row">
               <div class="col-xs-6 tilebank-box flex-container justify-center align-center" id="tileBank3"></div>
               <div class="col-xs-6 tilebank-box flex-container justify-center align-center" id="tileBank4"></div>
@@ -57,13 +57,13 @@
 
         <div class="col-xs-12 col-sm-2 col-sm-pull-4 clearfix"> <!-- Begin Middle area -->
           <div class="middle-top flex-container justify-center align-center">
-            <div class="round text-center">
+            <div class="round text-center ridge-border-sm">
               <p>Round</p>
-              <p id="roundCount">1</p>
+              <p id="roundCount" class="round-count">1</p>
             </div>
           </div>
           <div class="middle-bot flex-container justify-center align-center">
-            <div class="stoppers text-center">
+            <div class="stoppers text-center ridge-border-sm">
               <p>Stoppers</p>
               <div class="stopper" id="stopper1"></div>
               <div class="stopper" id="stopper2"></div>
