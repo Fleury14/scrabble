@@ -42,7 +42,7 @@
 
 .screen-background {
   background-color: #aaa;
-  height: 520px;
+  height: 500px;
   font-family: 'Arvo', 'serif';
 }
 
@@ -50,7 +50,7 @@
 
 .bluesquare-background {
   background-color: #7986b9;
-  height: 520px;
+  height: 500px;
   background-image: linear-gradient(0deg, transparent 48%, #fff 50%, transparent 52%), linear-gradient(90deg, transparent 48%, #fff 50%, transparent 52%);
   background-size: 50px 50px;
   border-right: 2px solid #fff;

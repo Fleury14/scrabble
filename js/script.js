@@ -208,8 +208,14 @@ function firstPuzzleStart() {
   if (cpuAnswered == 1) { //output results if cpu answers
     stopTimeFlag = true;
     appendOutputConsole('p', 'CPU answered correctly');
+		cpuScore += 50; //give cpu 50 points and redraw score
+		document.querySelector('#cpuScoreBox').innerText = 'Score: ' + cpuScore;
+
   }  else if (cpuAnswered == -1) {
     stopTimeFlag = true;
+		playerScore+=50; // give player 50 points and redraw
+		document.querySelector('#playerScoreBox').innerText = 'Score: ' + cpuScore;
+
     appendOutputConsole('p', 'CPU answered incorrectly');
   } // end if
 
@@ -234,7 +240,7 @@ function firstPuzzleStart() {
 function showingInstructions() {
 	clearConsole();
 	appendOutputConsole('p', 'There will be a total of 5 puzzles to solve. Each turn a player will select a tile from the list. You can guess one of the two tiles you selected to be filled in. After the tile is filled in, you or the CPU will have a chance to solve. If you can\'t, you can draw one more tile. Be careful, there are three tiles called stoppers that dont belong in the word and if you pick one, you will lose control of the board.');
-	appendOutputConsole('p', 'Puzzles are 100 points each plus 10 points for every tile not used. Correctly solving after guessing the tile in a blue square will give you 150, a pink one iwll give you 200. Good luck.');
+	appendOutputConsole('p', 'Puzzles are 100 points each plus 10 points for every tile not used. Correctly solving after guessing the tile in a blue square will give you 150, a pink one will give you 200. Good luck.');
 	appendOutputConsole('div', '<button class="continue-button" onclick="beginFirstRound()">Continue</button>', 'flex-container justify-center');
 }
 
@@ -576,7 +582,7 @@ function cpuContinue() {
 		let randNum2 = Math.random();
 		if(randNum2 > cpuSolveChance) {
 			setTimeout(function() {
-				appendOutputConsole('p', 'CPU does not know the answer and will select anothe tile.');
+				appendOutputConsole('p', 'CPU does not know the answer and will select another tile.');
 				appendOutputConsole('div', '<button class="continue-button" id="continue">CONTINUE</button>', 'flex-container justify-center');
 				document.querySelector('#continue').addEventListener('click', cpuTurn);
 			}, 1500); //end timeout
@@ -618,11 +624,11 @@ function gameOver() {
 	console.log('game ovah!');
 	clearConsole();
 
-	appendOutputConsole('p', 'Final Score - ' + player1Name + ' ' + playerScore + ' points. CPU: ' + cpuScore + 'points.');
+	appendOutputConsole('p', 'Final Score - ' + player1Name + ' ' + playerScore + ' points. CPU: ' + cpuScore + ' points.');
 	if(playerScore > cpuScore) {appendOutputConsole('p','Congrats, you win!');}
 	else {appendOutputConsole('p', 'The CPU wins. One step closer to SkyNet.');}
 
-	appendOutputConsole('p', 'gameOver');
+	appendOutputConsole('p', 'Thank you for playing!');
 }
 
 // Function if buzzer is clicked
@@ -691,6 +697,9 @@ function buzzerActivation() {
             alert('YOU GOT IT!');
             boardControl = 1;
             playerAnswered = 1;
+						playerScore+= 50;
+						document.querySelector('#playerScoreBox').innerText = 'Score: ' + cpuScore;
+
 						appendOutputConsole('p', 'Player has control of the board');
 						stopTimeFlag = true;
 						appendOutputConsole('div', '<button class="continue-button" onclick="showingInstructions()">Continue</button>', 'flex-container justify-center');
@@ -700,6 +709,9 @@ function buzzerActivation() {
             alert('WRONG-O! Control lost.');
             boardControl = 2;
             playerAnswered = -1;
+						cpuScore += 50;
+						document.querySelector('#cpuScoreBox').innerText = 'Score: ' + cpuScore;
+
 						appendOutputConsole('p', 'CPU has control of the board');
 						stopTimeFlag = true;
 						appendOutputConsole('div', '<button class="continue-button" onclick="showingInstructions()">Continue</button>', 'flex-container justify-center');
