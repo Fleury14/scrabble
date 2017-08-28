@@ -33,6 +33,10 @@ let tilesLeft = 0; //number of tiles remaining
 let playerScore = 0;
 let cpuScore = 0;
 
+//sound object
+let gameSound = new Object();
+gameSound.success = new Audio('sound/success.mp3');
+gameSound.buzzer = new Audio('sound/buzzer.mp3');
 
 // declare puzzle box ID
 var puzzleBox = document.getElementById('puzzle-box');
@@ -809,6 +813,11 @@ function tileCheckAnimation(tileArray) {
 
 	tileAnimBox.style.visibility = 'visible'; // start the animation
 	tileAnimBox.classList.add('tile-check-animation');
+	setTimeout(function() {
+		if(tileArray[0]==false) {gameSound.buzzer.play();}
+		else {gameSound.success.play();}
+	}, 1500);
+
 	setTimeout(function() {
 		tileAnimBox.style.visibility = 'hidden';
 		tileAnimBox.classList.remove('tile-check-animation');
