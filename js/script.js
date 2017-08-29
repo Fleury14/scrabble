@@ -33,6 +33,13 @@ let tilesLeft = 0; //number of tiles remaining
 let playerScore = 0;
 let cpuScore = 0;
 
+//sound object
+let gameSound = new Object();
+gameSound.success = new Audio('sound/success.mp3');
+gameSound.buzzer = new Audio('sound/buzzer.mp3');
+gameSound.timer = new Audio('sound/timer.mp3');
+gameSound.buzzIn = new Audio('sound/buzz-in.wav');
+gameSound.drawBoard = new Audio('sound/drawboard.wav');
 
 // declare puzzle box ID
 var puzzleBox = document.getElementById('puzzle-box');
@@ -154,6 +161,7 @@ function firstPuzzleStart() {
 
 // Begin timer: start filling in tiles at a rate of 1 per second
   var fillInTimer = setInterval(fillInTiles, 1000);
+	gameSound.timer.play();
 
 // Loop until either a buzzer is triggered or all but one of the tiles are filled
   function fillInTiles() {
@@ -277,6 +285,7 @@ function beginFirstRound() {
 
 	if(puzzleBonusFlag>0) { bonusTileIndex = Math.floor(Math.random() * currentWord.length); }
 
+	gameSound.drawBoard.play(); // play draw board sound
 	for (i = 0; i < currentWord.length; i++) { //draw puzzle
 		let boxIdOutput = 'letter-box' + i.toString();
 		let boxOutput = document.createElement('div');
@@ -650,11 +659,13 @@ function buzzerActivation() {
   if (buzzer == false) {
 
     console.log('CPU Buzzer activation');
+		gameSound.timer.pause(); // stop timer
+		gameSound.buzzIn.play(); // play buzzin sound
 
     switch(buzzerInstance) {
 
         case 0:
-          alert('CPU INTERCEPT!');
+          alert('CPU Buzzes in!');
 					clearConsole();
           var textOutput = document.createElement('p');
           // even if the cpu buzzes in, theres only a 75% chance they answer correctly off the bad, this random number checks that
@@ -685,6 +696,8 @@ function buzzerActivation() {
 
   if (buzzer == true) { //buzzer activation, ideally use this function for all buzzers
 
+			gameSound.timer.pause(); // stop timer sound
+			gameSound.buzzIn.play(); // play buzzin sound
       switch(buzzerInstance) {
 
         case 0: // Case 0 -- First round
@@ -809,6 +822,11 @@ function tileCheckAnimation(tileArray) {
 
 	tileAnimBox.style.visibility = 'visible'; // start the animation
 	tileAnimBox.classList.add('tile-check-animation');
+	setTimeout(function() {
+		if(tileArray[0]==false) {gameSound.buzzer.play();}
+		else {gameSound.success.play();}
+	}, 1500);
+
 	setTimeout(function() {
 		tileAnimBox.style.visibility = 'hidden';
 		tileAnimBox.classList.remove('tile-check-animation');
