@@ -585,10 +585,11 @@ function cpuContinue() {
 		let cpuSolveChance = 0.05; //initialize cpu solve chance
 		//cpusolving forumla 5% + 5% for each filled in letter
 		for(i=0; i<currentWord.length; i++) {
-			if(document.querySelector('#letter-box' + i) != '') { cpuSolveChance += 0.05; }
+			if(document.querySelector('#letter-box' + i).innerHTML != '') { cpuSolveChance += 0.05; }
 		}//end for
 
 		let randNum2 = Math.random();
+		console.log('Chance to solve:', cpuSolveChance, 'Actual random number', randNum2);
 		if(randNum2 > cpuSolveChance) {
 			setTimeout(function() {
 				appendOutputConsole('p', 'CPU does not know the answer and will select another tile.');
